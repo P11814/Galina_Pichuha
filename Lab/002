@@ -1,0 +1,188 @@
+/*
+ Задание 1. Строки
+6. Дана строка текста, в которой слова разделены пробелами. Необходимо:
+                              + определить количество слов в строке;
+                              + найти самое короткое и самое длинное слово и вывести их на экран;
+                              + исключить из строки первое и последнее слова и вывести текст, который остался.
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task_2_1
+{
+    class Program
+    {
+        private static int CompareDinosByLength(string x, string y)
+        {
+            if (x == null)
+            {
+                if (y == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                if (y == null)
+                {
+                    return 1;
+                }
+                else
+                {
+                    int retval = x.Length.CompareTo(y.Length);
+
+                    if (retval != 0)
+                    {
+                        return retval;
+                    }
+                    else
+                    {
+                        return x.CompareTo(y);
+                    }
+                }
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Task 6:");
+
+            String str = "На улице прекрасная погода ведь наступила весна ";
+
+            String time = " ";//хранение текущего слова
+            int j=0;
+
+            Console.WriteLine(str);
+
+            int size = str.Length;
+            int n = 0;//колличество слов
+
+            for (int i = 0; i < size; i++)
+            {
+                if (str[i] == ' ')
+                {
+                    n++;//считаем колличество слов
+                }
+            }
+
+            String[] array = new String[n];//массив для хранения слов в строке
+            for (int i = 0; i < size; i++)
+            {
+                if (str[i] == ' ')
+                {
+                    array[j] = time;
+                    j++;
+                    time = "";
+                }
+                else
+                {
+                    time = time + str[i];//составляем текущее слово
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Number of words - {0}.", n);
+            Console.WriteLine();
+
+            String[] array_2 = new String[n];//массив для хранения слов в строке
+            Array.Copy(array, array_2, n);//копируем
+
+            Array.Sort(array, CompareDinosByLength);
+            Console.WriteLine("The longest word - {0}.", array[n - 1]);
+            Console.WriteLine("The shortest word - {0}.", array[0]);
+            Console.WriteLine();
+
+            Console.WriteLine("Text without first and last words:");
+            for (int i = 1; i < n - 1; i++)
+            {
+                Console.Write(array_2[i]);
+                Console.Write(" ");
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+    }
+}
+
+
+
+
+/*
+Задание 2. Массивы
+6.	Напишите программу, которая меняет местами строки, содержащие наибольший и наименьший элемент рваного массива. 
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task_2_2
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //создаём рваный массив из строк
+            int[][] array = new int[3][];
+            array[0] = new int[4] { 1,2,3,4 };
+            array[1] = new int[2] { 0, 5 };
+            array[2] = new int[3] { 7,8,9 };
+
+            int max_pos = 0;
+            int min_pos = 0;
+
+            int max = 0;
+            int min = 100;
+
+            int max_size = 0;
+            int min_size = 0;
+
+            Console.WriteLine("Before:");
+            for (int i = 0; i < array.Length; ++i)
+            {
+                foreach (int j in array[i])
+                {
+                    Console.Write(j + " ");
+                    if(j>max)
+                    {
+                        max = j;
+                        max_pos = i;
+                        max_size = array[i].Length;
+                    }
+                    if (j < min)
+                    {
+                        min = j;
+                        min_pos = i;
+                        min_size = array[i].Length;
+                    }
+                }
+                Console.WriteLine();
+            }
+
+            int[] time = array[min_pos];
+            array[min_pos] = array[max_pos];
+            array[max_pos] = time;
+
+            Console.WriteLine();
+            Console.WriteLine("After:");
+            for (int i = 0; i < array.Length; ++i)
+            {
+                foreach (int j in array[i])
+                {
+                    Console.Write(j + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+    }
+}
