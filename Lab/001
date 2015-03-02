@@ -1,0 +1,408 @@
+/*
+ Задание 1. 
+ * Даны целые положительные числа А и В (A < B). 
+ * Вывести все целые числа от А до В включительно; 
+ * каждое число должно выводиться на новой строке; 
+ * при этом каждое число должно выводиться количество раз, 
+ * равное его значению (например, число 3 выводится 3 раза)
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task1
+{
+    class Program
+    {
+        static void Main()
+        {
+            int a;
+            int b;//а<b
+
+            do
+            {
+            Console.WriteLine("Enter first positive number:");
+            a = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter second positive number more than first:");
+            b = int.Parse(Console.ReadLine());
+            }while((b<=a)||(b<0)||(a<0));
+
+            int i=a;
+            while(i<=b)
+            {
+                for (int j = 0; j < i;j++)
+                {
+                    Console.WriteLine(i);
+                }
+                i++;
+            }
+        }
+    }
+}
+
+
+
+
+
+/*
+ Задание 2. 
+Вывести следующие строки (количество строк вводится с клавиатуры ):
+A B C D E
+B C D E F
+C D E F G
+D E F G H
+E F G H I и т.д.
+(Использовать тип char).
+ */ 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task2
+{
+    class Program
+    {
+        static void Main()
+        {
+            int lines;//колличество строк
+            int ind = 0;
+            char[] array;
+            array = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+            Console.WriteLine("Enter number of lines:");
+            lines = int.Parse(Console.ReadLine());
+
+            
+            for (int j = 0; j < lines;j++)
+            {
+                if (j % 21==0)
+                {
+                    ind = 0;
+                }
+                for (int i = 0; i < 5; i++)
+                {
+                    Console.Write(array[ind+i]);
+                }
+                Console.WriteLine();
+                ind++;
+            }
+        }
+    }
+}
+
+
+
+
+
+/*
+ Задание 3. Определить, является ли введенное число числом-перевертышем.
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int a = 54345;//данное число
+            int c = a;//число-клон
+            int d = a;//число-клон
+            int b = 0;//переменная для подсчёта колиичества знаков в числе
+            double e = 0;//перевёрнутое число
+            int p = 0;//колличество знаков
+
+            while (d > 10)
+            {
+                d = d / 10;
+                p++;//считаем цифры
+            }
+
+            while (c > 0)
+            {
+                b = c % 10;//последний знак в числе
+                c = c / 10;//убираем последний знак в числе
+                e = e + b * Math.Pow(10, p);//добавляем к конечному перевёрнутому числу символы
+                p--;//уменьшаем колличество оставшихся десятков
+            }
+
+            if (a == e)
+            {
+                Console.WriteLine("Число {0} является полиндромным.", e);
+            }
+            else
+            {
+                Console.WriteLine("Число {0} не является полиндромным.", e);
+            }
+        }
+    }
+}
+
+
+
+
+
+/*
+Задание 4. Проверка на  интервал с дополнительным условием
+Вар	допустимый	Доп.условие
+6	200-1000	X четное
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task4
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            for(int i=200;i<1000;i++)
+            {
+                if (i%2==0)
+                {
+                    Console.WriteLine(i);
+                }
+            }
+        }
+    }
+}
+
+
+
+
+/*
+Задание 5. Оператор switch. Проверка на попадание в список значений
+Вар	Список допустимых значений
+6	‘x’, ’y’, ’z’
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task5
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            char a;
+
+            Console.WriteLine("Enter symbol:");
+            a = char.Parse(Console.ReadLine());
+
+            switch (a)
+            {
+                case ('x'):
+                    Console.WriteLine(a);
+                    break;
+                case ('y'):
+                    Console.WriteLine(a);
+                    break;
+                case ('z'):
+                    Console.WriteLine(a);
+                    break;
+                default:
+                    Console.WriteLine("Not found!");
+                    break;
+            }
+        }
+    }
+}
+
+
+
+
+/*
+Задание 6. Операторы циклов (использовать  операторы while, do-while и for )
+Вывести значение выражения в интервале
+Вар	Выражение	интервал	
+ * ч/з шаг
+6	1000-X*X	10..50	
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task6
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int step;
+            int t = 0;
+
+            do
+            {
+                Console.WriteLine("Enter step no more than 30 and no more than 1 for x from 10 till 50:");
+                step = int.Parse(Console.ReadLine());
+            } while ((step < 1) || (step > 30));
+
+            Console.WriteLine("Resalts of 1000-X*X for x from 10 till 50 with step = " + step);
+
+            for(int i=10;i<=50;i++)
+            {
+               t++;
+                if(t==step)//выводим значения выражения с x из диапазона и с заданным шагом
+                {
+                Console.WriteLine(1000 - i * i);
+                t = 0;
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+/*
+ Задание 7
+Определить сумму наименьшей и наибольшей цифры в числе	
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task7
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int number = 0;
+            int min = 0;
+            int max = 0;
+            int step = 0;//шаги
+
+            int d = number;//число-клон
+            int p = 0;//колличество цифр в числе
+
+            int b;//цифра в числе
+
+            Console.WriteLine("Enter number:");
+            number = int.Parse(Console.ReadLine());
+
+            //считаем колличество цифр в числе
+            while (d > 10)
+            {
+                d = d / 10;
+                p++;
+            }
+
+            if (p == 1)//если одна цифра
+            {
+                Console.Write("Your number has only one numeral!");
+            }
+            else//если цифр больше 1
+            {
+                while (number > 0)
+                {
+                    b = number % 10;//последняя цифра в числе
+                    number = number / 10;//уменьшаем число на один десяток
+
+                    if (step == 0)//если шаг первый
+                    {
+                        min = b;
+                        max = b;
+                    }
+                    else
+                    {
+                        if (b < min)
+                        {
+                            min = b;
+                        }
+                        if (b > max)
+                        {
+                            max = b;
+                        }
+                    }
+                    step++;//прибавили шаг
+                }
+                Console.WriteLine("Min = {0}",min);
+                Console.WriteLine("Max = {0}", max);
+                Console.WriteLine("Summa of nim and max = {0}", min + max);
+            }
+        }
+    }
+}
+
+
+
+
+/*
+Задание 8
+Рассчитать сумму чисел 100 Фибоначчи : 1, 1, 2, 3, 5, 8 ..   Xn=X(n-1)+X(n-2)
+
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task8
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int summ = 0;
+            int i = 0;
+            int n1 = 0;
+            int n2 = 0;
+            int time = 0;
+
+            while (i < 8)
+            {
+                if(i==0)
+                {
+                    summ += 0;
+                    n1 = 0;
+                    i++;
+                }
+                if(i==1)
+                {
+                    summ += 1;
+                    n2 = 1;
+                    i++;
+                }
+                else 
+                {
+                    time = n1;
+                    n1 = n2;
+                    n2 = n2 + time;
+                    summ += n2;
+                    i++;
+                }
+            }
+            Console.WriteLine(summ);
+        }
+    }
+}
