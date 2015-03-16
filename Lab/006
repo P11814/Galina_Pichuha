@@ -1,0 +1,584 @@
+/*
+ Создать класс «самолет», содержащий следующие закрытые поля: название пункта назначения, шестизначный номер рейса, время отправления. 
+ Обеспечить проверку на правильность ввода данных. Предусмотреть свойства для получения состояния объекта. 
+Создать класс «Аэропорт», содержащий закрытый массив самолетов. Обеспечить следующие возможности: 
+• вывод информации о самолете по номеру рейса с помощью индекса; 
+• вывод информации о самолетах, отправляющихся в течение часа после введенного с клавиатуры времени; 
+• вывод информации о самолетах, отправляющихся в заданный пункт назначения; 
+Информация должна быть отсортирована по времени отправления. 
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task
+{
+    class Airplane
+    {
+        private string name;
+        private string destination;
+        private int number;
+        private int hours;
+        private int minutes;
+
+
+        public Airplane() { }
+
+        public string NAME
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
+        }
+
+        public string DESTINATION
+        {
+            get
+            {
+                return destination;
+            }
+            set
+            {
+                destination = value;
+            }
+        }
+
+        public int NUMBER
+        {
+            get
+            {
+                return number;
+            }
+            set
+            {
+
+                number = value;
+
+            }
+        }
+
+        public int HOURS
+        {
+            get
+            {
+                return hours;
+            }
+            set
+            {
+                if ((value < 0) || (value > 24))
+                {
+                    Console.WriteLine("Enter right value for hours!");
+                }
+                else
+                {
+                    hours = value;
+                }
+            }
+        }
+
+        public int MINUTES
+        {
+            get
+            {
+                return minutes;
+            }
+            set
+            {
+                int n = 0;//колличество цифр
+                int num = value;
+                do
+                {
+                    num = num / 10;
+                    n++;
+                } while ((int)num != 0);
+
+                if (((value < 0) || (value > 59)) && (num != 2))
+                {
+                    Console.WriteLine("Enter right value for hours!");
+                }
+                else
+                {
+                    minutes = value;
+                }
+            }
+        }
+
+        public void print_information()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Destination: {0}.", destination);
+            Console.WriteLine("Number: {0}.", number);
+            Console.WriteLine("Hours: {0}.", hours);
+            Console.WriteLine("Minutes: {0}.", minutes);
+            Console.WriteLine("++++++++++++++++++++");
+            Console.WriteLine();
+        }
+    }
+
+
+
+
+
+    class Airport
+    {
+        public int num = 0;//количество самолётов
+        private Airplane[] mass;//массив из самолётов
+
+        public Airport()
+        {
+            Airplane[] mass = new Airplane[num];
+        }
+
+        //сортировка
+        int CompareByTime(Airplane first, Airplane second)
+        {
+            return (first.HOURS * 60 + first.MINUTES) - (second.HOURS * 60 + second.MINUTES);
+            // return (first.HOURS - second.HOURS);
+        }
+
+        public Airplane ADD
+        {
+            set
+            {
+                Airplane[] tmp = new Airplane[num];//временный массив
+                tmp = mass;//сохраняем текущий массив во временный
+                mass = new Airplane[num + 1];//создаём новый массив длиннее старого на 1 
+
+                for (int i = 0; i < num + 1; i++)
+                {
+                    if (i != num)
+                    {
+                        mass[i] = tmp[i];
+                    }
+                    else
+                    {
+                        mass[i] = value;//добавляем последний самолёт
+                    }
+                }
+                num++;
+            }
+        }
+
+
+        public Airplane this[int i]//i - номер рейса
+        {
+            get
+            {
+                foreach (Airplane it in mass)
+                {
+                    if (it.NUMBER == i)
+                    {
+                        return it;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+        }
+
+
+        public Airplane[] this[string i]//i - пункт назначения
+        {
+            get
+            {
+                List<Airplane> tmp_2 = new List<Airplane>();//создаём массив, куда будем сохранять все найденные самолёты
+
+                foreach (Airplane it in mass)
+                {
+                    if (it.DESTINATION == i)
+                    {
+                        tmp_2.Add(it);
+                    }
+                }
+                if (tmp_2.Capacity == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    tmp_2.Sort(CompareByTime);//сортируем по времени отправления
+                    return tmp_2.ToArray();
+                }
+            }
+        }
+
+
+        public Airplane[] this[int i, int j]//i - часы, j - минуты
+        {
+            get
+            {
+                List<Airplane> tmp_time = new List<Airplane>();//создаём массив, куда будем сохранять все найденные самолёты
+
+                foreach (Airplane it in mass)
+                {
+                    if ((it.HOURS == i) && (it.MINUTES >= j))//если часы совпадают, то минуты  могут быть больше j
+                    {
+                        tmp_time.Add(it);
+                    }
+                    if ((it.HOURS == i + 1) && (it.MINUTES <= j))//если часов больше на 1, то минут может быть не больше j
+                    {
+                        tmp_time.Add(it);
+                    }
+                }
+                if (tmp_time.Capacity==0)
+                {
+                    return null;
+                }
+                else
+                {
+                    tmp_time.Sort(CompareByTime);//сортируем по времени отправления
+                    return tmp_time.ToArray();
+                }
+            }
+        }
+
+
+
+        public void print_information()
+        {
+            Console.WriteLine("Information about all the airplans of airport:");
+            foreach (Airplane it in mass)
+            {
+                Console.WriteLine();
+                Console.WriteLine("***************************");
+                Console.WriteLine("Name: {0}", it.NAME);
+                Console.WriteLine("Destination: {0}", it.DESTINATION);
+                Console.WriteLine("Number: {0}", it.NUMBER);
+                Console.WriteLine("Hours: {0}", it.HOURS);
+                Console.WriteLine("Minutes: {0}", it.MINUTES);
+                Console.WriteLine("***************************");
+                Console.WriteLine();
+            }
+        }
+    }
+
+
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello!");
+            Airport Minsk_2 = new Airport();//сразу же создаём аэропорт            
+            int choice;
+
+            do
+            {
+                do
+                {
+                    Console.WriteLine("What do you want to do?");
+                   // Console.WriteLine("1 - Add airport.");
+                    Console.WriteLine("2 - Add airplane.");
+                    Console.WriteLine("3 - Watch information about all the airplanes of any airport.");
+                    Console.WriteLine("4 - Watch information about airplane with number.");
+                    Console.WriteLine("5 - Watch airplanes at any time.");
+                    Console.WriteLine("6 - Watch airplanes to any destination.");
+                    Console.WriteLine("7 - Exit.");
+                    while (!int.TryParse(Console.ReadLine(), out choice)) { Console.WriteLine("Enter right value:"); }
+                } while ((choice < 1) || (choice > 7));//пока не введём правильный вариант
+
+                switch (choice)
+                {
+                    case 2:
+                        Airplane obj = new Airplane();//создаём самолёт
+                        //заполняем поля
+                        Console.WriteLine("Enter name:");
+                        obj.NAME = Console.ReadLine();
+
+                        int n = 0;//колличество цифр
+                        int num;
+                        int num_time;
+
+                        do
+                        {
+                            Console.WriteLine("Enter number: xxxxxx");
+                            num = int.Parse(Console.ReadLine());
+                            num_time = num;
+
+                            do
+                            {
+                                num_time = num_time / 10;
+                                n++;
+                            } while ((int)num_time != 0);
+
+                            if (n == 6)
+                            {
+                                obj.NUMBER = num;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Enter right value for number!");
+                                n = 0;
+                            }
+                        } while (n != 6);       
+
+
+                        
+                        
+                        Console.WriteLine("Enter destination:");
+                        obj.DESTINATION = Console.ReadLine();
+
+                        int h;
+                        int hour;
+                        int nn=0;
+                        do
+                        {
+                            Console.WriteLine("Enter hour:");
+                            h = int.Parse(Console.ReadLine());
+                            hour = h;
+                            do
+                            {
+                                hour = hour / 10;
+                                nn++;
+                            } while ((int)hour != 0);
+
+                            if (nn == 2)
+                            {
+                                obj.HOURS = h;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Enter right value for number!");
+                                nn = 0;
+                            }
+                        } while (nn != 2);
+
+
+                        int m;
+                        int min;
+                        int nnn=0;
+                        
+                        do
+                        {
+                            Console.WriteLine("Enter minutes: xx");
+                            m = int.Parse(Console.ReadLine());
+                            min = m;
+                            do
+                            {
+                                min = min / 10;
+                                nnn++;
+                            } while ((int)min != 0);
+
+                            if (nnn == 2)
+                            {
+                                obj.MINUTES = m;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Enter right value for number!");
+                                nnn = 0;
+                            }
+                        } while (nnn != 2);
+
+                        Minsk_2.ADD = obj;//добавляем самолёт
+                        Console.WriteLine("Airplane was added!");
+                        break;
+
+                    case 3:
+                        Minsk_2.print_information();
+                        break;
+
+                    case 4:
+                        Console.WriteLine("Enter number of airplane:");
+                        int number = int.Parse(Console.ReadLine());
+                        if (Minsk_2[number] == null)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine("Number not found!");
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine("Airplane №{0}:",number);
+                            Minsk_2[number].print_information();
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine();
+                        }
+                        break;
+
+                    case 5:
+                        //поиск по времени (в течение часа после заданного времени)
+                        Console.WriteLine("Enter hour:");
+                        int hours = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter minutes:");
+                        int minutes = int.Parse(Console.ReadLine());
+
+                        if (Minsk_2[hours, minutes] != null)
+                        {
+                            foreach (Airplane it in Minsk_2[hours, minutes])
+                            {
+                                it.print_information();
+                            }
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine();
+                            Console.WriteLine("Time not found!");
+                            Console.WriteLine();
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine();
+                        }
+                        break;
+
+                    case 6:
+                        //поиск по пункту назначения
+                        Console.WriteLine("Enter destination:");
+                        string dest = Console.ReadLine();
+                        if (Minsk_2[dest] != null)
+                        {
+                            foreach (Airplane i in Minsk_2[dest])
+                            {
+                                i.print_information();
+                            }
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine();
+                            Console.WriteLine("Destination not found!");
+                            Console.WriteLine();
+                            Console.WriteLine("-------------------------");
+                            Console.WriteLine();
+                        }
+                        break;
+
+                    case 7:
+                        Console.WriteLine("Good buy!");
+                        return;
+                        break;
+                }
+            } while (choice != 7);//пока пользователь не захочет выйти
+
+
+
+            //ДЛЯ БЫСТРОЙ ПРОВЕРКИ РАБОТЫ ПРОГРАММЫ
+/*
+            Airport Minsk_2 = new Airport();//создаём аэропорт
+
+            Airplane Boing_787_Dreamliner = new Airplane();
+            Boing_787_Dreamliner.NAME = "Boing_787_Dreamliner";
+            Boing_787_Dreamliner.DESTINATION = "Chicago";
+            Boing_787_Dreamliner.NUMBER = 123456;
+            Boing_787_Dreamliner.HOURS = 14;
+            Boing_787_Dreamliner.MINUTES = 30;
+            Boing_787_Dreamliner.print_information();
+
+            Airplane Boing = new Airplane();
+            Boing.DESTINATION = "Chicago";
+            Boing.HOURS = 15;
+            Boing.MINUTES = 30;
+
+            Airplane A = new Airplane();
+            A.DESTINATION = "Gas";
+            A.HOURS = 14;
+            A.MINUTES = 35;
+
+            Airplane C = new Airplane();
+            A.DESTINATION = "Gasa";
+            A.HOURS = 14;
+            A.MINUTES = 50;
+
+            Airplane D = new Airplane();
+            A.DESTINATION = "Gasac";
+            A.HOURS = 14;
+            A.MINUTES = 40;
+
+            Minsk_2.ADD = Boing_787_Dreamliner;
+            Minsk_2.ADD = Boing;
+            Minsk_2.ADD = A;
+            Minsk_2.ADD = C;
+            Minsk_2.ADD = D;
+
+            //поиск по номеру самолёта
+            if (Minsk_2[123456] == null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("-------------------------");
+                Console.WriteLine("Number not found!");
+                Console.WriteLine("-------------------------");
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("-------------------------");
+                Console.WriteLine("Airplane №12345:");
+                Minsk_2[123456].print_information();
+                Console.WriteLine("-------------------------");
+                Console.WriteLine();
+            }
+
+            //поиск по пункту назначения
+            Console.WriteLine("Airplane to Chicago:");
+
+            if (Minsk_2["Chicago"] != null)
+            {
+                foreach (Airplane i in Minsk_2["Chicago"])
+                {
+                    i.print_information();
+                }
+                Console.WriteLine("-------------------------");
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("-------------------------");
+                Console.WriteLine();
+                Console.WriteLine("Destination not found!");
+                Console.WriteLine();
+                Console.WriteLine("-------------------------");
+                Console.WriteLine();
+            }
+
+            //поиск по времени (в течение часа после заданного времени)
+            Console.WriteLine("Time 14.30:");
+
+            if (Minsk_2[14, 30] != null)
+            {
+                foreach (Airplane it in Minsk_2[14, 30])
+                {
+                    it.print_information();
+                }
+                Console.WriteLine("-------------------------");
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("-------------------------");
+                Console.WriteLine();
+                Console.WriteLine("Time not found!");
+                Console.WriteLine();
+                Console.WriteLine("-------------------------");
+                Console.WriteLine();
+            }
+
+            //вся информация по самолётам конкретного аэропорта
+            Minsk_2.print_information();
+*/
+        }
+    }
+}
