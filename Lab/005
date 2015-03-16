@@ -1,0 +1,463 @@
+//Задание 1
+
+/*Реализовать класс для хранения комплексного числа и т.д.
+ Выполнить перегрузку всех операторов, необходимых для реализации выделенного
+ в main кода*/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task_1
+{
+    class Complex
+    {
+        public double x;
+        public double y;
+
+        public Complex(double a, double b)
+        {
+            x = a;
+            y = b;
+        }
+        public Complex()
+        {
+            x = 0;
+            y = 0;
+        }
+
+        public static Complex operator -(Complex first, Complex second)
+        {
+            Complex res = new Complex();
+            res.x = first.x - second.x;
+            res.y = first.y - second.y;
+            return res;
+        }
+
+        //приводим обычное число к комплексному и упрощаем
+        // x + yi + n = (x + yi) + (n + oi) = (x+n) + yi
+        public static Complex operator -(Complex first, int num)
+        {
+            Complex f = first;
+            Complex s = new Complex(num, 0);
+            return f - s;
+        }
+
+        public static Complex operator *(Complex first, Complex second)
+        {
+            Complex res = new Complex();
+            res.x = first.x * second.x - first.y * second.y;
+            res.y = first.x * second.y + first.y * second.x; 
+            return res;
+        }
+
+        //приводим обычное число к комплексному и упрощаем
+        // (x + yi) * n = (x * n) + n * yi
+        public static Complex operator *(int num, Complex second)
+        {
+            Complex res = new Complex();
+            res.x = second.x * num;
+            res.y = second.y * num;
+            return res;
+        }
+
+        public static Complex operator /(Complex first, Complex second)
+        {
+            Complex res = new Complex();
+            res.x = (first.x*second.x+first.y*second.y)/(second.x*second.x + second.y*second.y);
+            res.y = (first.y * second.x - first.x * second.y) / (second.x * second.x + second.y * second.y);
+            return res;
+        }
+
+        public void show()
+        {
+            Console.WriteLine("{0} + {1}i", x, y);
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //реализовать код (по заданию)
+            Complex z = new Complex(1, 1);
+            z.show();
+            Complex zl;
+            zl = z - (z * z * z - 1) / (3 * z * z);
+            Console.Write("zl = ");
+            zl.show();
+
+            //просто для проверки перегрузок (не по заданию)
+            Console.WriteLine("*************************");
+            Complex a = new Complex(2, 3);
+            Console.WriteLine("a");
+            a.show();
+            Complex b = new Complex(4, 5);
+            Console.WriteLine("b");
+            b.show();
+            Complex c = a * b;
+            Console.WriteLine("a*b");
+            c.show();
+            Console.WriteLine("___________________________");
+            Complex v = a / b;
+            Console.WriteLine("a/b");
+            v.show();
+            Console.WriteLine("___________________________");
+            Complex w = a - b;
+            Console.WriteLine("a-b");
+            w.show();
+            Console.WriteLine("___________________________");
+            Complex i = a - 1;
+            Console.WriteLine("a-1");
+            i.show();
+            Console.WriteLine("___________________________");
+            Complex y = 3 * a;
+            Console.WriteLine("3 * a");
+            y.show();
+        }
+    }
+}
+
+
+//Задание 2
+
+/*Реализовать класс для дроби и перегрузить все стандартные операторы
+и операторы, необходимые для реализации выделенного кода в main*/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task_2
+{
+    class Fraction
+    {
+        int numerator;//числитель
+        int denominator;//знаменатель
+        public Fraction(int n, int d)
+        {
+            numerator = n;
+            denominator = d;
+        }
+
+
+        public Fraction() { }
+
+        public static Fraction operator +(Fraction first, Fraction second)
+        {
+            Fraction res = new Fraction();
+            res.numerator = first.numerator * second.denominator + second.numerator * first.denominator;
+            res.denominator = first.denominator * second.denominator;
+            return res;
+        }
+
+        public static Fraction operator +(Fraction frac, double num)
+        {
+            //преобразуем число в дробь
+            int p = 0;//число символов после запятой
+            double clone = num;
+
+            while (clone % 10 != 0)//пока остаток от деления не станет 0
+            {
+                clone = clone * 10;
+                p++;//считаем цифры
+            }
+            int n = (int)num;//целая часть
+
+            int den_new = 1;//знаменатель получаемой дроби
+            for (int i = 0; i < (p - 1); i++)//p-1 т к лишний раз *10
+            {
+                den_new = den_new * 10;
+            }
+            //часть числа после запятой
+            int num_after_point = (int)((num - n) * den_new);
+
+            int num_new = (int)(den_new * n + num_after_point);
+
+
+            Fraction res = new Fraction();
+
+            res.denominator = frac.denominator * den_new;
+            res.numerator = den_new * frac.numerator + num_new * frac.denominator;
+            return res;
+        }
+
+        public static Fraction operator -(Fraction first, Fraction second)
+        {
+            Fraction res = new Fraction();
+            res.numerator = first.numerator * second.denominator - second.numerator * first.denominator;
+            res.denominator = first.denominator * second.denominator;
+            return res;
+        }
+
+        public static Fraction operator *(Fraction first, Fraction second)
+        {
+            Fraction res = new Fraction();
+            res.numerator = first.numerator * second.numerator;
+            res.denominator = first.denominator * second.denominator;
+            return res;
+        }
+
+        public static Fraction operator *(Fraction frac, int num)
+        {
+            Fraction res = new Fraction();
+            res.numerator = frac.numerator * num;
+            res.denominator = frac.denominator;
+            return res;
+        }
+
+        public static Fraction operator *(int num, Fraction frac)
+        {
+            Fraction res = new Fraction();
+            res.numerator = frac.numerator * num;
+            res.denominator = frac.denominator;
+            return res;
+        }
+
+        public static Fraction operator /(Fraction first, Fraction second)
+        {
+            Fraction res = new Fraction();
+            res.numerator = first.numerator * second.denominator;
+            res.denominator = first.denominator * second.numerator;
+            return res;
+        }
+
+        public static bool operator ==(Fraction first, Fraction second)
+        {
+            first.denominator = first.denominator * second.denominator;
+            second.denominator = first.denominator * second.denominator;
+            first.numerator = first.numerator * second.denominator;
+            second.numerator = second.numerator * first.denominator;
+            if (first.numerator == second.numerator)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool operator !=(Fraction first, Fraction second)
+        {
+            first.denominator = first.denominator * second.denominator;
+            second.denominator = first.denominator * second.denominator;
+            first.numerator = first.numerator * second.denominator;
+            second.numerator = second.numerator * first.denominator;
+            if (first.numerator == second.numerator)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static bool operator <(Fraction first, Fraction second)
+        {
+            first.denominator = first.denominator * second.denominator;
+            second.denominator = first.denominator * second.denominator;
+            first.numerator = first.numerator * second.denominator;
+            second.numerator = second.numerator * first.denominator;
+            if (first.numerator < second.numerator)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool operator >(Fraction first, Fraction second)
+        {
+            first.denominator = first.denominator * second.denominator;
+            second.denominator = first.denominator * second.denominator;
+            first.numerator = first.numerator * second.denominator;
+            second.numerator = second.numerator * first.denominator;
+            if (first.numerator < second.numerator)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static bool operator true(Fraction first)
+        {
+            if (first.numerator > first.denominator)//дробь неправильная ->true
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool operator false(Fraction first)
+        {
+            if (first.numerator > first.denominator)//дробь неправильная ->false
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public void show()
+        {
+            Console.WriteLine(numerator + "/" + denominator);
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int c_num;
+            int c_den;
+            int b_num;
+            int b_den;
+
+            try
+            {
+                Console.WriteLine("Enter numerator of fraction c:");
+                c_num = int.Parse(Console.ReadLine());
+                Console.WriteLine("Enter denomerator of fraction c:");
+                c_den = int.Parse(Console.ReadLine());
+                Console.WriteLine("Enter numerator of fraction b:");
+                b_num = int.Parse(Console.ReadLine());
+                Console.WriteLine("Enter denomerator of fraction b:");
+                b_den = int.Parse(Console.ReadLine());
+
+                //перегружаем стандартные операторы
+                Fraction c = new Fraction(c_num, c_den);
+                Fraction b = new Fraction(b_num, b_den);
+
+
+                Console.Write("Fraction c = ");
+                c.show();
+                Console.Write("Fraction b = ");
+                b.show();
+
+                Fraction m = c + b;
+                Console.Write("fraction c + fraction b = ");
+                m.show();
+                Console.WriteLine("_____________");
+
+                Fraction n = c - b;
+                Console.Write("fraction c - fraction b = ");
+                n.show();
+                Console.WriteLine("_____________");
+
+                Fraction v = c * b;
+                Console.Write("fraction c * fraction b = ");
+                v.show();
+                Console.WriteLine("_____________");
+
+                Fraction z = c / b;
+                Console.Write("fraction c / fraction b = ");
+                z.show();
+                Console.WriteLine("_____________");
+
+                if (b == c)
+                {
+                    Console.WriteLine("fraction b = fraction c");
+                }
+                else
+                {
+                    Console.WriteLine("fraction b != fraction c");
+                }
+
+                Console.WriteLine("_____________");
+
+                if (b != c)
+                {
+                    Console.WriteLine("fraction b != fraction c");
+                }
+                else
+                {
+                    Console.WriteLine("fraction b = fraction c");
+                }
+
+                Console.WriteLine("_____________");
+
+                if (b < c)
+                {
+                    Console.WriteLine("fraction b < fraction c");
+                }
+                else
+                {
+                    Console.WriteLine("fraction b > fraction c");
+                }
+
+                Console.WriteLine("_____________");
+
+                if (b > c)
+                {
+                    Console.WriteLine("fraction b > fraction c");
+                }
+                else
+                {
+                    Console.WriteLine("fraction b < fraction c");
+                }
+
+                Console.WriteLine("_____________");
+
+                if (b)//если неправильная
+                {
+                    Console.WriteLine("fraction b is improper fraction", b);
+                }
+                else
+                {
+                    Console.WriteLine("fraction b is proper fraction", b);
+                }
+
+            }
+            catch
+            {
+                Console.WriteLine("ERROR! Enter only numbers!");
+            }
+
+            Console.WriteLine("_____________");
+            Console.WriteLine("_____________");
+            Console.WriteLine("_____________");
+
+            //перегрузить операторы, необходимые для реализации следующего кода кода
+            Fraction f = new Fraction(3, 4);
+
+            int a = 10;
+
+            Console.Write("Fraction f = ");
+            f.show();
+            Console.WriteLine("a = 10");
+
+            Fraction f1 = f * a;
+            Console.Write("fraction f * a = ");
+            f1.show();
+            Console.WriteLine("_____________");
+
+            Fraction f2 = a * f;
+            Console.Write("a * fraction f = ");
+            f2.show();
+            Console.WriteLine("_____________");
+
+            double d = 1.5;
+            Fraction f3 = f + d;
+
+            Console.WriteLine("d = 1.5");
+            Console.Write("fraction f + d= ");
+            f3.show();
+        }
+    }
+}
