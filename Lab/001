@@ -406,3 +406,98 @@ namespace Task8
         }
     }
 }
+
+
+
+//Переделанные
+
+Задание 6
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task6
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int step;
+           
+            do
+            {
+                Console.WriteLine("Enter step no more than 50 and no little than 10:");
+                step = int.Parse(Console.ReadLine());
+            } while ((step < 10) || (step > 50));
+
+            Console.WriteLine("Resalts of 1000-X*X for x from 10 till 50 with step = " + step);
+
+            for(int i=10;i<=50;)
+            {
+               //выводим значения выражения с x из диапазона и с заданным шагом
+               
+                Console.WriteLine(1000 - i * i);
+                i += step;
+               
+                }
+            }
+        }
+    }
+
+
+
+Задание 8
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task8
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int summ = 0;
+            int i = 0;
+            int n1 = 0;
+            int n2 = 0;
+            int time = 0;
+            int number;
+
+            do
+            {
+                Console.WriteLine("Enter number:");
+                number = int.Parse(Console.ReadLine());
+            } while (number < 0);
+
+            while (i < number)
+            {
+                if(i==0)
+                {
+                     i++;
+                }
+                if(i==1)
+                {
+                    summ += 1;
+                    n2 = 1;
+                    i++;
+                }
+                else 
+                {
+                    time = n1;
+                    n1 = n2;
+                    n2 = n2 + time;
+                    summ += n2;
+                    i++;
+                }
+            }
+            Console.WriteLine(summ);
+        }
+    }
+}
