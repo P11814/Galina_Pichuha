@@ -1,0 +1,661 @@
+// Задание 1
+
+/*Придумать класс, описывающий студента и предусмотреть в нем следующие характеристики: 
+ * фамилия, имя, отчество, группа , возраст, массив оценок (рваный) по программированию, 
+ * администрированию и  дизайну. Добавить методы по работе с перечисленными данными: возможность 
+ * установки/получения оценки, получение среднего балла по заданному предмету, распечатка данных о студенте.*/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task_1
+{
+    class Student
+    {
+        public string name;
+        public string last_name;
+        public string patronymic;
+        public int group;
+        private int[][] raiting;
+
+        public Student(string n, string ln, string p, int g)
+        {
+            name = n;
+            last_name = ln;
+            patronymic = p;
+            group = g;
+            raiting = new int[3][];
+            for (int i = 0; i < 3; i++)
+            {
+                raiting[i] = new int[0];
+            }
+        }
+
+        public void set_raiting(int subject, int r)
+        {
+            int lenght = raiting[subject].Length;
+            int[] time = new int[lenght];//временный массив для хранения оценек перед перезаписью
+
+            time = raiting[subject];//копируем во временный массив
+
+            raiting[subject] = new int[lenght + 1];//создаём новый массив длиннее старого на 1  
+
+            for (int i = 0; i < lenght + 1; i++)
+            {
+                if (i != lenght)
+                {
+                    raiting[subject][i] = time[i];
+                }
+                else
+                {
+                    raiting[subject][i] = r;
+                }
+            }
+        }
+
+        public double get_GPA(int subject)
+        {
+            int summ = 0;
+            double GPA = 0;
+
+            for (int i = 0; i < raiting[subject].Length; i++)
+            {
+                summ += raiting[subject][i];
+            }
+            GPA = summ / raiting[subject].Length;
+
+            return GPA;
+        }
+
+        public void print_information()
+        {
+            Console.WriteLine("Name: {0}", name);
+            Console.WriteLine("last Name: {0}", last_name);
+            Console.WriteLine("Patronymic: {0}", patronymic);
+            Console.WriteLine("Group: {0}", group);
+
+            Console.WriteLine("Marks:");
+
+            for (int i = 0; i < raiting.Length; i++)
+            {
+                if (i == 0)
+                {
+                    Console.Write("Marks of Programming: ");
+                }
+                if (i == 1)
+                {
+                    Console.Write("Marks of Aministration: ");
+                }
+                if (i == 2)
+                {
+                    Console.Write("Marks of Design: ");
+                }
+
+                foreach (int it in raiting[i])
+                {
+                    Console.Write(it + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello!");
+
+            List<Student> students = new List<Student>();//создаём массив из студентов
+
+            String name; 
+            String ln; 
+            String patronymic;
+            int group;
+            int sub;//предмет
+            int m;//оценка
+            int choice;
+            do
+            {
+                do
+                {
+                    Console.WriteLine("What do you want to do?");
+                    Console.WriteLine("0 - Add new student");
+                    Console.WriteLine("1 - Enter marks");
+                    Console.WriteLine("2 - See information about student");
+                    Console.WriteLine("3 - See GPA");
+                    Console.WriteLine("4 - Exit");
+                    while (!int.TryParse(Console.ReadLine(), out choice)) { Console.WriteLine("Enter right value:"); }
+                } while ((choice < 0) || (choice > 4));//пока не введём правильный вариант
+
+                switch (choice)
+                {
+                    case 0:
+                        Console.WriteLine("Enter name:");
+                        name = Console.ReadLine();
+
+                        Console.WriteLine("Enter last_name:");
+                        ln = Console.ReadLine();
+
+                        Console.WriteLine("Enter patronymic:");
+                        patronymic = Console.ReadLine();
+
+                        Console.WriteLine("Enter group:");
+                        group = int.Parse(Console.ReadLine());
+
+                        Student first = new Student(name, ln, patronymic, group);
+                        students.Add(first);
+                        break;
+
+                    case 1:
+                        if(students.Count==0)
+                        {
+                            Console.WriteLine("List is empty!");
+                            break;
+                        }
+
+                        Console.WriteLine("Enter last_name:");
+                        ln = Console.ReadLine();
+                        Console.WriteLine("0 - программирование, 1 - администрирование, 2 - дизайн");
+                        Console.WriteLine("Enter subject:");
+                        sub = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter mark:");
+                        m = int.Parse(Console.ReadLine());
+
+                        //поиск студента в массиве
+                        foreach (Student it in students)
+                        {
+                            if (it.last_name == ln)
+                            {
+                                it.set_raiting(sub, m);
+                            }
+                        }
+                        break;
+
+                    case 2:
+                        if (students.Count == 0)
+                        {
+                            Console.WriteLine("List is empty!");
+                            break;
+                        }
+
+                        Console.WriteLine("Enter last_name:");
+                        ln = Console.ReadLine();
+                        //поиск студента в массиве
+                        foreach (Student it in students)
+                        {
+                            if (it.last_name == ln)
+                            {
+                                it.print_information();
+                                ln = it.last_name;
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        if (students.Count == 0)
+                        {
+                            Console.WriteLine("List is empty!");
+                            break;
+                        }
+
+                        Console.WriteLine("Enter last_name:");
+                        ln = Console.ReadLine();
+                        //поиск студента в массиве
+                        foreach (Student it in students)
+                        {
+                            if (it.last_name == ln)
+                            {
+                                Console.WriteLine("Enter subject:");
+                                sub = int.Parse(Console.ReadLine());
+                                it.get_GPA(sub);
+                            }
+                        }
+                        break;
+
+                    case 4:
+                        Console.WriteLine("Good buy!");
+                        return;
+                        break;
+                }
+            } while (choice != 4);//пока пользователь не захочет выйти
+        }
+    }
+}
+
+
+
+// Задание 2
+
+/*Разработать собственный класс для хранения целочисленных 
+ * коэффициентов А и В линейного уравнения A*X + B*Y = 0. 
+ * В классе реализовать статический метод Parse, которые принимает 
+ * строку со значениями коэффициентов, разделенных запятой или пробелом. 
+ * В случае передачи в метод строки недопустимого формата генерируется исключение FormatException.*/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task_2
+{
+   class Equation
+    {
+        public static int a;
+        public static int b;
+
+        public Equation(string line) 
+        { 
+        Parse(line);
+        }
+
+        public static void Parse(string line)
+        {
+            try
+            {
+                //забиваем слово в массив, если встречается орпеделенный символ
+                string[] mass_list = line.Split(new Char[] { ' ', ',' });
+                a = int.Parse(mass_list[0]);
+                b = int.Parse(mass_list[1]);
+                Console.WriteLine("a-{0} b-{1}", a, b);
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Wrong value");
+            }
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Enter А и В with \" \" or \",\" : ");
+            string line = Console.ReadLine();
+            Equation first = new Equation(line);
+        }
+    }
+}
+
+
+
+// Задание 3
+
+/*Разработать метод для решения системы 2 линейных уравнений:
+A1*x + B1*y = 0
+A2*x + B2*y = 0
+Метод с помощью выходных параметров должен возвращать найденной 
+решение или генерирует исключение ArgumentOutOfRangeException, если решение не существует.
+*/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task_3
+{
+    class Program
+    {
+        static public class Equation
+        {
+            static public void solve_an_linear_equation(double a1, double b1, double a2, double b2, double c1, double c2)
+            {
+                double x;
+                double y;
+                double _x1 = a1;//коэфф. при х1
+                double _y1 = b1;//коэфф. при у1
+                double _x2 = a2;//коэфф. при х2
+                double _y2 = b2;//коэфф. при у2
+                double _c1 = c1;//чуме равно 1е уравнение
+                double _c2 = c2;//чуме равно 2е уравнение
+
+                /*получили матрицу:
+                
+                 _x1   _y1 | _с1
+                 _x2   _y2 | _с2
+                 
+                 и решаем методом Гаусса
+                */
+
+                //для проверки смотрим, как изменяется матрица
+                Console.WriteLine("_x1 = {0}, _y1 = {1} | _c1 = {2}.", _x1, _y1, _c1);
+                Console.WriteLine("_x2 = {0}, _y2 = {1} | _c2 = {2}.", _x2, _y2, _c2);
+                Console.WriteLine();
+
+                //1-ую строку делим на _x1
+                _y1 = _y1 / _x1;
+                _c1 = _c1 / _x1;
+                _x1 = _x1 / _x1;
+
+                //от 2 строки отнимаем 1 строку, умноженную на _x2
+                _y2 = _y2 - _y1 * _x2;
+                _c2 = _c2 - _c1 * _x2;
+                _x2 = _x2 - _x1 * _x2;
+
+                Console.WriteLine("_x1 = {0}, _y1 = {1} | _c1 = {2}.", _x1, _y1, _c1);
+                Console.WriteLine("_x2 = {0}, _y2 = {1} | _c2 = {2}.", _x2, _y2, _c2);
+                Console.WriteLine();
+
+                //2-ую строку делим на _y2
+
+                if (((_x1 + _y1 == _c1) && (_c1 == 0)) || ((_x2 + _y2 == _c2) && (_c2 == 0)))
+                {
+                    Console.WriteLine("System has lots of value.");
+                    return;
+                }
+                if ((_x1 + _y1 != _c1) || (_x2 + _y2 != _c2))
+                {
+                    //Console.WriteLine("System has not a solve.");
+                   // return;
+                }
+                        _x2 = _x2 / _y2;
+                        _c2 = _c2 / _y2;
+                        _y2 = _y2 / _y2;
+
+                        Console.WriteLine("_x1 = {0}, _y1 = {1} | _c1 = {2}.", _x1, _y1, _c1);
+                        Console.WriteLine("_x2 = {0}, _y2 = {1} | _c2 = {2}.", _x2, _y2, _c2);
+                        Console.WriteLine();
+
+                        //от 1 строки отнимаем 2 строку, умноженную на _y1
+                        _x1 = _x1 - _x2 * _y1;
+                        _c1 = _c1 - _c2 * _y1;
+                        _y1 = _y1 - _y2 * _y1;
+
+                        Console.WriteLine("_x1 = {0}, _y1 = {1}, _c1 = {2}.", _x1, _y1, _c1);
+                        Console.WriteLine("_x2 = {0}, _y2 = {1}, _c2 = {2}.", _x2, _y2, _c2);
+                        Console.WriteLine();
+
+                        //определяем x и у
+                        x = _c1;
+                        y = _c2;
+                        double[] mass = new double[2];
+                        mass[0] = x;
+                        mass[1] = y;
+                
+                Console.WriteLine("x = {0}, y = {1}.", x, y);  
+            }
+        }
+
+
+        static void Main(string[] args)
+        {
+            double a1, b1, a2, b2, c1, c2;
+            Console.WriteLine("You can solve a sysyem of linear equation.");
+            Console.WriteLine("Fof example:");
+            Console.WriteLine("A1*x + B1*y = C1");
+            Console.WriteLine("A2*x + B2*y = C2");
+
+            Console.WriteLine("Enter A1:");
+            a1 = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter B1:");
+            b1 = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter A2:");
+            a2 = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter B2:");
+            b2 = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter C1:");
+            c1 = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter C2:");
+            c2 = int.Parse(Console.ReadLine());
+
+            Equation.solve_an_linear_equation(a1, b1, a2, b2, c1, c2);
+        }
+    }
+}
+
+
+
+
+// Задание 4
+
+/*Разработайте приложение «7 чудес света», где каждое чудо будет представлено 
+ * отдельным классом. Создайте дополнительный класс, содержащий точку входа. 
+ * Распределите приложение по файлам проекта и с помощью пространства имен обеспечьте 
+ * возможность взаимодействия классов.*/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using S = Statue_of_Zeus_at_Olympia;
+using G = Gardens_of_Babylon;
+using M = Mausoleum_of_Halicarnassus;
+using L = Lighthouse_of_Alexandria;
+using P = Pyramids_of_Giza;
+using T = Temple_of_Artemis_at_Ephesus;
+using C = Colossus_of_Rhodes;
+
+
+namespace Task_4
+{
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("");
+
+            S::Statue_of_Zeus_at_Olympia.print();
+            G::Gardens_of_Babylon.print();
+            M::Mausoleum_of_Halicarnassus.print();
+            L::Lighthouse_of_Alexandria.print();
+            P::Pyramids_of_Giza.print();
+            T::Temple_of_Artemis_at_Ephesus.print();
+            C::Colossus_of_Rhodes.print();
+
+            //если в одном пространстве имён (например в S) все классы, то обращение будет таким же:
+            // S::Statue_of_Zeus_at_Olympia.print();
+            //или
+            // S::Gardens_of_Babylon.print();
+        }
+    }
+}
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Gardens_of_Babylon
+{
+    static class Gardens_of_Babylon
+    {
+        public static void print()
+        {
+            Console.WriteLine("Gardens of Babylon - 605 bc.");
+        }
+    }
+}
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Temple_of_Artemis_at_Ephesus
+{
+    static class Temple_of_Artemis_at_Ephesus
+    {
+        public static void print()
+        {
+            Console.WriteLine("Temple of Artemis at Ephesus - 550 bc.");
+        }
+    }
+}
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Colossus_of_Rhodes
+{
+    static class Colossus_of_Rhodes
+    {
+        public static void print()
+        {
+            Console.WriteLine("Colossus of Rhodes - 292-280 bc.");
+        }
+    }
+}
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Statue_of_Zeus_at_Olympia
+{
+    class Statue_of_Zeus_at_Olympia
+    {
+        public static void print()
+        {
+            Console.WriteLine("Statue of Zeus at Olympia - 435 bc.");
+        }
+    }
+}
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Pyramids_of_Giza
+{
+    static class Pyramids_of_Giza
+    {
+        public static void print()
+        {
+            Console.WriteLine("Pyramids of Giza - 2540 bc.");
+        }
+    }
+}
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Mausoleum_of_Halicarnassus
+{
+    static class Mausoleum_of_Halicarnassus
+    {
+        public static void print()
+        {
+            Console.WriteLine("Mausoleum of Halicarnassus - 351 bc.");
+        }
+    }
+}
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lighthouse_of_Alexandria
+{
+    static class Lighthouse_of_Alexandria
+    {
+        public static void print()
+        {
+            Console.WriteLine("Lighthouse of Alexandria - 4 century bc.");
+        }
+    }
+}
+
+
+
+
+
+
+// Задание 5
+
+/*Разработать приложение, в котором бы сравнивалось население трех столиц из разных стран. 
+ * Причем страна бы обозначалась пространством имен, а город – классом в данном пространстве.*/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Belarus
+{
+    static class Minsk
+    {
+        public static double population = 1.92;
+    }
+}
+
+namespace Russia
+{
+    static class Moscow
+    {
+        public static double population = 11.5;
+    }
+}
+
+namespace Ukraine
+{
+    static class Kiev
+    {
+        public static double population = 2.76;
+    }
+}
+
+
+namespace Task_5
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            if (Belarus.Minsk.population > Russia.Moscow.population)
+            {
+                if (Ukraine.Kiev.population > Belarus.Minsk.population)
+                {
+                    Console.WriteLine("The most populated country is Kiev");
+                }
+                else
+                {
+                    Console.WriteLine("The most populated country is Minsk");
+                }
+            }
+            else
+            {
+                if (Russia.Moscow.population > Ukraine.Kiev.population)
+                {
+                    Console.WriteLine("The most populated country is Moscow");
+                }
+                else
+                {
+                    Console.WriteLine("The most populated country is Kiev");
+                }
+            }
+        }
+    }
+}
