@@ -1,0 +1,1074 @@
+/*
+ Вариант 6
+Создать абстрактный класс Tovar с методами, позволяющим вывести на экран информацию о товаре, а также определить, 
+  соответствует ли она сроку годности на текущую дату.
+ 
+Создать производные классы: 
+  Продукт 
+ * (название, цена, дата производства, срок годности), 
+ * 
+  Партия 
+ * (название, цена, количество шт, дата производства, срок годности), 
+ * 
+  Комплект 
+ * (названия, цена, перечень продуктов) со своими методами вывода информации на экран, 
+  и определения соответствия сроку годности.
+ 
+Создать базу (массив) из n товаров, вывести полную информацию из базы на экран, а также организовать 
+  поиск просроченного товара (на момент текущей даты).
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task
+{
+    //абстрактный класс Товар
+    public abstract class Commodity
+    {
+        private String name;
+        private int price;
+
+        //конструктор по умолчанию
+        public Commodity() { }
+
+        //конструктор с двумя параметрами, общими для всех БК
+        public Commodity(String n, int p)
+        {
+            name = n;
+            price = p;
+        }
+
+        //свойство для названия
+        public String NAME
+        {
+            get
+            { return name; }
+            set
+            { name = value; }
+        }
+
+        //свойство для цены
+        public int PRICE
+        {
+            get
+            { return price; }
+            set
+            { price = value; }
+        }
+
+
+
+        //метод - печать информации о товаре
+        public abstract void print_information();
+
+
+        //метод - вышел ли срок годности товара на текущую дату
+        public abstract bool is_expiration_date(string today);
+    }
+
+
+    public class Product : Commodity
+    {
+        private String date_of_manufacture;
+        private String date_of_expiration;
+
+        public Product() { }
+
+        public Product(String n, int p, String d_m, String d_e) :
+            base(n, p)//в баззовый класс
+        {
+            //остальные инициализируем здесь
+            date_of_manufacture = d_m;
+            date_of_expiration = d_e;
+        }
+
+        public List<int> Parse(string str)
+        {
+            int d, m, y;
+            List<int> num = new List<int>();
+            try
+            {
+                //забиваем слово в массив, если встречается орпеделенный символ
+                string[] SplitStr = str.Split(new Char[] { '.' });
+                d = int.Parse(SplitStr[0]);
+                m = int.Parse(SplitStr[1]);
+                y = int.Parse(SplitStr[2]);
+                num.Add(d);
+                num.Add(m);
+                num.Add(y);
+            }
+            catch
+            {
+                Console.WriteLine("Wrong value");
+                return null;
+            }
+            return num;
+        }
+
+        //свойства
+        public String DATE_OF_MANUFACTURE
+        {
+            get
+            {
+                return date_of_manufacture;
+            }
+            set
+            {
+                if (Parse(value) != null)
+                {
+                    List<int> d_m = Parse(value);
+                    int d, m, y;
+                    d = d_m[0];
+                    m = d_m[1];
+                    y = d_m[2];
+                    if ((d <= 31) && (d > 0) && (m <= 12) && (m > 0) && (y > 2000))
+                    {
+                        date_of_manufacture = value;
+                    }
+                }
+            }
+
+        }
+
+        public String DATE_OF_EXPIRATION
+        {
+            get
+            {
+                return date_of_expiration;
+            }
+            set
+            {
+                if (Parse(value) != null)
+                {
+                    List<int> d_m = Parse(value);
+                    int d, m, y;
+                    d = d_m[0];
+                    m = d_m[1];
+                    y = d_m[2];
+                    if ((d <= 31) && (d > 0) && (m <= 12) && (m > 0) && (y > 2000) && (y < 2016))
+                    {
+                        date_of_expiration = value;
+                    }
+                }
+            }
+        }
+
+        //переопределяем метолды
+        public override void print_information()
+        {
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Information about commodity:");
+            Console.WriteLine("Name: {0}", NAME);
+            Console.WriteLine("Price: {0}", PRICE);
+            Console.WriteLine("Date of manufacture: {0}", DATE_OF_MANUFACTURE);
+            Console.WriteLine("Date of expiration: {0}", DATE_OF_EXPIRATION);
+            Console.WriteLine("------------------------------");
+        }
+
+        public override bool is_expiration_date(string today)
+        {
+            //проверка здесь уже не нужна
+            List<int> d_m2 = Parse(date_of_expiration);
+            int d, m, y;
+            d = d_m2[0];
+            m = d_m2[1];
+            y = d_m2[2];
+
+            int t_d, t_m, t_y;
+            //парсим текуую дату
+            if (Parse(today) != null)
+            {
+                List<int> d_m = Parse(today);
+                t_d = d_m[0];
+                t_m = d_m[1];
+                t_y = d_m[2];
+
+                //если текущая дата введена правильно - сравниваем её со сроком годности
+                if ((t_d <= 31) && (t_d > 0) && (t_m <= 12) && (t_m > 0) && (t_y > 2000) && (t_y < 2016))
+                {
+                    if (t_y > y)//если текущий год больше - срок вышел
+                    {
+                        return true;
+                    }
+                    if (t_y < y)//если текущий год меньше - срок не вышел
+                    {
+                        return false;
+                    }
+                    if (t_y == y)//если годы совпадают - сравниваем месяцы
+                    {
+                        if (t_m > m) //если текущий месяц больше - срок вышел
+                        {
+                            return true;
+                        }
+                        if (t_m < m)//если текущий месяц меньше - срок не вышел
+                        {
+                            return false;
+                        }
+                        if (t_m == m)//если месяцы совпадают - сравниваем дни
+                        {
+                            if (t_d > d) //если текущий день больше - срок вышел
+                            {
+                                return true;
+                            }
+                            if (t_d < d)//если текущий день меньше - срок не вышел
+                            {
+                                return false;
+                            }
+                            if (t_d == d)//если дни совпадают - срок вышел
+                            {
+
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+
+
+    //класс Партия
+    public class Batch : Commodity
+    {
+        private int number;//количество штук
+        private String date_of_manufacture;
+        private String date_of_expiration;
+
+        public Batch() { }
+
+        public Batch(String n, int p, int num, String d_m, String d_e) :
+            base(n, p)//в баззовый класс
+        {
+            //остальные инициализируем здесь
+            number = num;
+            date_of_manufacture = d_m;
+            date_of_expiration = d_e;
+        }
+
+        public List<int> Parse(string str)
+        {
+            int d, m, y;
+            List<int> num = new List<int>();
+            try
+            {
+                //забиваем слово в массив, если встречается орпеделенный символ
+                string[] SplitStr = str.Split(new Char[] { '.' });
+                d = int.Parse(SplitStr[0]);
+                m = int.Parse(SplitStr[1]);
+                y = int.Parse(SplitStr[2]);
+                num.Add(d);
+                num.Add(m);
+                num.Add(y);
+            }
+            catch
+            {
+                Console.WriteLine("Wrong value");
+                return null;
+            }
+            return num;
+        }
+
+        //свойства
+        public int NUMBER
+        {
+            set
+            {
+                number = value;
+            }
+            get
+            {
+                return number;
+            }
+        }
+
+        public String DATE_OF_MANUFACTURE
+        {
+            get
+            {
+                return date_of_manufacture;
+            }
+            set
+            {
+                if (Parse(value) != null)
+                {
+                    List<int> d_m = Parse(value);
+                    int d, m, y;
+                    d = d_m[0];
+                    m = d_m[1];
+                    y = d_m[2];
+                    if ((d <= 31) && (d > 0) && (m <= 12) && (m > 0) && (y > 2000))
+                    {
+                        date_of_manufacture = value;
+                    }
+                }
+            }
+
+        }
+
+        public String DATE_OF_EXPIRATION
+        {
+            get
+            {
+                return date_of_expiration;
+            }
+            set
+            {
+                if (Parse(value) != null)
+                {
+                    List<int> d_m = Parse(value);
+                    int d, m, y;
+                    d = d_m[0];
+                    m = d_m[1];
+                    y = d_m[2];
+                    if ((d <= 31) && (d > 0) && (m <= 12) && (m > 0) && (y > 2000))
+                    {
+                        date_of_expiration = value;
+                    }
+                }
+            }
+        }
+
+        //переопределяем метолды
+        public override void print_information()
+        {
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Information about banch:");
+            Console.WriteLine("Name: {0}", NAME);
+            Console.WriteLine("Price: {0}", PRICE);
+            Console.WriteLine("Number: {0}", NUMBER);
+            Console.WriteLine("Date of manufacture: {0}", DATE_OF_MANUFACTURE);
+            Console.WriteLine("Date of expiration: {0}", DATE_OF_EXPIRATION);
+            Console.WriteLine("------------------------------");
+        }
+
+        public override bool is_expiration_date(string today)
+        {
+            //проверка здесь уже не нужна
+            List<int> d_m2 = Parse(date_of_expiration);
+            int d, m, y;
+            d = d_m2[0];
+            m = d_m2[1];
+            y = d_m2[2];
+
+            int t_d, t_m, t_y;
+            //парсим текуую дату
+            if (Parse(today) != null)
+            {
+                List<int> d_m = Parse(today);
+                t_d = d_m[0];
+                t_m = d_m[1];
+                t_y = d_m[2];
+
+                //если текущая дата введена правильно - сравниваем её со сроком годности
+                if ((t_d <= 31) && (t_d > 0) && (t_m <= 12) && (t_m > 0) && (t_y > 2000))
+                {
+                    if (t_y > y)//если текущий год больше - срок вышел
+                    {
+                        return true;
+                    }
+                    if (t_y < y)//если текущий год меньше - срок не вышел
+                    {
+                        return false;
+                    }
+                    if (t_y == y)//если годы совпадают - сравниваем месяцы
+                    {
+                        if (t_m > m) //если текущий месяц больше - срок вышел
+                        {
+                            return true;
+                        }
+                        if (t_m < m)//если текущий месяц меньше - срок не вышел
+                        {
+                            return false;
+                        }
+                        if (t_m == m)//если месяцы совпадают - сравниваем дни
+                        {
+                            if (t_d > d) //если текущий день больше - срок вышел
+                            {
+                                return true;
+                            }
+                            if (t_d < d)//если текущий день меньше - срок не вышел
+                            {
+                                return false;
+                            }
+                            if (t_d == d)//если дни совпадают - срок вышел
+                            {
+
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+
+
+    //класс Комплект
+    public class Set : Commodity
+    {
+        List<Product> list_of_prod;//перечень продуктов
+
+        public Set() { }
+
+        public Set(String n, int p, List<Product> list) :
+            base(n, p)//в баззовый класс
+        {
+            //остальные инициализируем здесь
+            list_of_prod = list;
+        }
+
+        public List<Product> LIST_OF_PROD
+        {
+            get
+            {
+                return list_of_prod;
+            }
+            set
+            {
+                list_of_prod = value;
+            }
+        }
+
+
+        //переопределяем метолды
+        public override bool is_expiration_date(string today)
+        {
+            foreach (Product it in list_of_prod)
+            {
+                //если хотябы один товар в наборе с истёкшем сроком годности, то и весь набор считать истёкшим
+                if (it.is_expiration_date(today))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+
+        public override void print_information()
+        {
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Information about set:");
+            Console.WriteLine("Name: {0}", NAME);
+            Console.WriteLine("Price: {0}", PRICE);
+            Console.WriteLine("List of products:");
+            foreach (Product it in list_of_prod)
+            {
+                Console.WriteLine(it.NAME);
+            }
+            Console.WriteLine("------------------------------");
+        }
+    }
+
+
+
+
+    class Program
+    {
+        static public List<int> Parse(string str)
+        {
+            int d, m, y;
+            List<int> num = new List<int>();
+            try
+            {
+                //забиваем слово в массив, если встречается орпеделенный символ
+                string[] SplitStr = str.Split(new Char[] { '.' });
+                d = int.Parse(SplitStr[0]);
+                m = int.Parse(SplitStr[1]);
+                y = int.Parse(SplitStr[2]);
+
+                //если дата введена правильно
+                if ((d <= 31) && (d > 0) && (m <= 12) && (m > 0) && (y > 2000))
+                {
+                    num.Add(d);
+                    num.Add(m);
+                    num.Add(y);
+                }
+                else
+                {
+                    Console.WriteLine("Wrong value");
+                    return null;
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Wrong value");
+                return null;
+            }
+            return num;
+        }
+
+        static void Main(string[] args)
+        {
+            //массив для хранения продуктов
+            List<Product> lp = new List<Product>();
+
+            //массив для хранения партий
+            List<Batch> bat = new List<Batch>();
+
+            //массив для хранения наборов
+            List<Set> s_t = new List<Set>();
+
+            //создаём базу
+            List<Commodity> tovary = new List<Commodity>();
+
+            Console.WriteLine("Hello!");
+
+            string curr_date;//текущая дата
+            int choice;
+            do
+            {
+                Console.WriteLine("Enter the current date in format 01.01.2015");
+                curr_date = Console.ReadLine();
+            } while (Parse(curr_date) == null);
+
+            do
+            {
+                Console.WriteLine();
+                Console.WriteLine("What do you want to do?");
+                Console.WriteLine("1 - Add product and batch.");
+                Console.WriteLine("2 - Add set.");
+                Console.WriteLine("3 - Print information about product.");
+                Console.WriteLine("4 - Print information about batch.");
+                Console.WriteLine("5 - Print information about set.");
+                Console.WriteLine("6 - Check up expiration date of products.");
+                Console.WriteLine("7 - Check up expiration date of batchs.");
+                Console.WriteLine("8 - Check up expiration date of sets.");
+                Console.WriteLine("9 - Print information of base.");
+                Console.WriteLine("10 - Check up expiration date of base.");
+                Console.WriteLine("12 - Exit");
+                Console.WriteLine();
+
+                do
+                {
+                    Console.WriteLine("Enter your choice:");
+                    choice = int.Parse(Console.ReadLine());
+                } while ((choice < 1) && (choice > 12));//пока не будет выбран верный вариант
+
+
+
+                switch (choice)
+                {
+                    case 1:
+
+                        Product first = new Product();
+                        Console.WriteLine("Enter name of product and banch:");
+                        string name_of_prod = Console.ReadLine();
+                        first.NAME = name_of_prod;
+
+                        Batch second = new Batch();
+                        second.NAME = name_of_prod;//у продукта и у партии имена совпадают
+
+                        int g = 0;//просто счётчик для проверки
+                        do
+                        {
+                            Console.WriteLine("Enter price of product:");
+                            int price_of_prod;
+                            try
+                            {
+                                price_of_prod = int.Parse(Console.ReadLine());
+                                g++;
+                                first.PRICE = price_of_prod;
+
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Wrong value!");
+                            }
+                        } while (g != 1);
+                        g = 0;
+
+                        do
+                        {
+                            Console.WriteLine("Enter price of batch:");
+                            int price_of_bat;
+                            try
+                            {
+                                price_of_bat = int.Parse(Console.ReadLine());
+                                g++;
+                                second.PRICE = price_of_bat;
+
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Wrong value!");
+                            }
+                        } while (g != 1);
+                        g = 0;
+
+                        do
+                        {
+                            Console.WriteLine("Enter number of product in the banch:");
+                            int n;
+                            try
+                            {
+                                n = int.Parse(Console.ReadLine());
+                                g++;
+                                second.NUMBER = n;
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Wrong value!");
+                            }
+                        } while (g != 1);
+                        g = 0;
+
+                        string date_of_man_of_prod;
+                        do
+                        {
+                            Console.WriteLine("Enter date of manufacture of product and batch with '.':");
+                            date_of_man_of_prod = Console.ReadLine();
+                        } while (Parse(date_of_man_of_prod) == null);
+                        first.DATE_OF_MANUFACTURE = date_of_man_of_prod;//даты совпадают
+                        second.DATE_OF_MANUFACTURE = date_of_man_of_prod;
+
+                        string date_of_exp_of_prod;
+                        do
+                        {
+                            Console.WriteLine("Enter date of expiration of product '.':");
+                            date_of_exp_of_prod = Console.ReadLine();
+                        } while (Parse(date_of_exp_of_prod) == null);
+                        first.DATE_OF_EXPIRATION = date_of_exp_of_prod;//даты совпадают
+                        second.DATE_OF_EXPIRATION = date_of_exp_of_prod;
+
+                        lp.Add(first);
+                        bat.Add(second);
+                        tovary.Add(first);//заносим в базу
+                        tovary.Add(second);//заносим в базу
+                        break;
+
+                        //добавить набор
+                    case 2:
+
+                        Set third = new Set();
+                        Console.WriteLine("Enter name of set:");
+                        string name_of_set = Console.ReadLine();
+                        third.NAME = name_of_set;
+                        int gg = 0;
+
+                        do
+                        {
+                            Console.WriteLine("Enter price of set:");
+                            int price_of_set;
+                            try
+                            {
+                                price_of_set = int.Parse(Console.ReadLine());
+                                gg++;
+                                third.PRICE = price_of_set;
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Wrong value!");
+                            }
+                        } while (gg != 1);
+                        gg = 0;
+
+                        //выбор продуктов для комплекта
+                        Console.WriteLine("Available products:");
+                        int i = 1;
+                        foreach (Product it in lp)
+                        {
+                            Console.WriteLine("№ {0}", i);
+                            Console.WriteLine(it.NAME);
+                            i++;
+                        }
+                        Console.WriteLine("How many products must be in the set:");
+                        int np;//число продуктов в наборе
+                        np = int.Parse(Console.ReadLine());
+
+                        //массив для хранения названий продуктов в наборе
+                        List<Product> set = new List<Product>();
+                        int ggg = 0;//счётчик
+
+                        for (int j = 0; j < np; j++)
+                        {
+                            do
+                            {
+                                Console.WriteLine("Enter Product:");
+                                String n_p = Console.ReadLine();
+
+                                //если находим введённый товар в массиве продуктов
+                                foreach (Product it in lp)
+                                {
+                                    if (it.NAME == n_p)
+                                    {
+                                        set.Add(it);//то добавляем продукт к набору
+                                        ggg++;
+                                    }
+                                }
+                                if (ggg == 0)//ничего не нашло
+                                {
+                                    Console.WriteLine("Product not found!");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Product was added!");
+                                }
+                            } while (ggg == 0);
+                        }
+
+                        third.LIST_OF_PROD = set;
+
+                        s_t.Add(third);
+                        tovary.Add(third);//заносим в базу
+                        break;
+
+                    //вывод информации о продукте
+                    case 3:
+                        if (lp.Count == 0)
+                        {
+                            Console.WriteLine("Set not found!");
+                        }
+                        else
+                        {
+                            string prod;
+                            int gggg = 0;
+                            do
+                            {
+                                Console.WriteLine("Available products:");
+                                int ii = 1;
+                                foreach (Product it in lp)
+                                {
+                                    Console.WriteLine("№ {0}", ii);
+                                    Console.WriteLine(it.NAME);
+                                    ii++;
+                                }
+                                Console.WriteLine("Enter product for information:");
+                                prod = Console.ReadLine();
+                                foreach (Product it in lp)
+                                {
+                                    if (it.NAME == prod)
+                                    {
+                                        it.print_information();
+                                        gggg++;
+                                    }
+                                }
+                                if (gggg == 0)//ничего не нашло
+                                {
+                                    Console.WriteLine("Product not found!");
+                                }
+                            } while (gggg == 0);
+                        }
+                        break;
+
+                    case 4:
+                        if (bat.Count == 0)
+                        {
+                            Console.WriteLine("Batch not found!");
+                        }
+                        else
+                        {
+                            string batc;
+                            int s = 0;
+                            do
+                            {
+                                Console.WriteLine("Available products:");
+                                int iii = 1;
+                                foreach (Batch it in bat)
+                                {
+                                    Console.WriteLine("№ {0}", iii);
+                                    Console.WriteLine(it.NAME);
+                                    iii++;
+                                }
+                                Console.WriteLine("Enter batch for information:");
+                                batc = Console.ReadLine();
+                                foreach (Batch it in bat)
+                                {
+                                    if (it.NAME == batc)
+                                    {
+                                        it.print_information();
+                                        s++;
+                                    }
+                                }
+                                if (s == 0)//ничего не нашло
+                                {
+                                    Console.WriteLine("Batch not found!");
+                                }
+                            } while (s == 0);
+                        }
+                        break;
+
+                    //вывод информации о наборе
+                    case 5:
+                        if (s_t.Count==0)
+                        {
+                            Console.WriteLine("Set not found!");
+                        }
+                        else
+                        {
+                            string st;
+                            int ss = 0;
+                            do
+                            {
+                                Console.WriteLine("Available set:");
+                                int j = 1;
+                                foreach (Set it in s_t)
+                                {
+                                    Console.WriteLine("№ {0}", j);
+                                    Console.WriteLine(it.NAME);
+                                    j++;
+                                }
+                                Console.WriteLine("Enter set for information:");
+                                st = Console.ReadLine();
+                                foreach (Set it in s_t)
+                                {
+                                    if (it.NAME == st)
+                                    {
+                                        it.print_information();
+                                        ss++;
+                                    }
+                                }
+                                if (ss == 0)//ничего не нашло
+                                {
+                                    Console.WriteLine("Set not found!");
+                                }
+                            } while (ss == 0);
+                        }
+                        break;
+
+                    //проверка срока годности продуктов
+                    case 6:
+                        if (lp.Count == 0)
+                        {
+                            Console.WriteLine("Products is absent!");
+                        }
+                        else
+                        {
+                            foreach (Product it in lp)
+                            {
+                                Console.Write("{0} - ", it.NAME);
+                                if (it.is_expiration_date(curr_date))
+                                {
+                                    Console.WriteLine("off");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("ok");
+                                }
+                            }
+                        }
+                        break;
+
+                    //проверка срока годности партии
+                    case 7:
+                        if (bat.Count == 0)
+                        {
+                            Console.WriteLine("Batch is absent!");
+                        }
+                        else
+                        {
+                            foreach (Batch it in bat)
+                            {
+                                Console.Write("{0} - ", it.NAME);
+                                if (it.is_expiration_date(curr_date))
+                                {
+                                    Console.WriteLine("off");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("ok");
+                                }
+                            }
+                        }
+                        break;
+
+                    //проверка срока годности набора
+                    case 8:
+                        if (s_t.Count == 0)
+                        {
+                            Console.WriteLine("Set is absent!");
+                        }
+                        else
+                        {
+                            foreach (Set it in s_t)
+                            {
+                                Console.Write("{0} - ", it.NAME);
+                                if (it.is_expiration_date(curr_date))
+                                {
+                                    Console.WriteLine("off");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("ok");
+                                }
+                            }
+                        }
+                        break;
+
+                    //вывод базы данных
+                    case 9:
+
+                        if (tovary.Count == 0)
+                        {
+                            Console.WriteLine("Base is empty!");
+                        }
+                        else
+                        {
+                            foreach (Commodity it in tovary)
+                            {
+                                it.print_information();
+                            }
+                        }
+                        break;
+
+                    //проверка срока годности товаров в базе
+                    case 10:
+                        if (tovary.Count == 0)
+                        {
+                            Console.WriteLine("Base is empty!");
+                        }
+                        else
+                        {
+                            foreach (Commodity it in tovary)
+                            {
+                                Console.Write("{0} - ", it.NAME);
+                                if (it.is_expiration_date(curr_date))
+                                {
+                                    Console.WriteLine("off");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("ok");
+                                }
+                            }
+                        }
+                        break;
+
+                    case 12:
+                        return;
+                        break;
+                }
+            } while (choice != 12);//пока пользователь не захочет выйти
+
+
+            //ДЛЯ БЫСТРОЙ ПРОВЕРКИ
+            /*
+                  //создаём базу
+                  List<Commodity> tovary = new List<Commodity>();
+
+                  //массив для хранения продуктов
+                  List<Product> lp = new List<Product>();
+
+                  Product first = new Product();
+                  first.NAME = "Кофе";
+                  first.PRICE = 12.6;
+                  first.DATE_OF_MANUFACTURE = "12.11.2014";
+                  first.DATE_OF_EXPIRATION = "12.09.2015";
+
+                  first.print_information();
+
+                  if (first.is_expiration_date("12.10.2015"))
+                  {
+                      Console.WriteLine("срок вышел");
+                  }
+                  else
+                  {
+                      Console.WriteLine("срок не вышел");
+                  }
+                  lp.Add(first);
+                  tovary.Add(first);
+
+                  Product second = new Product();
+                  second.NAME = "Чай";
+                  second.PRICE = 5.75;
+                  second.DATE_OF_MANUFACTURE = "12.10.2014";
+                  second.DATE_OF_EXPIRATION = "12.11.2015";
+
+                  second.print_information();
+
+                  if (second.is_expiration_date("12.10.2015"))
+                  {
+                      Console.WriteLine("срок вышел");
+                  }
+                  else
+                  {
+                      Console.WriteLine("срок не вышел");
+                  }
+
+                  lp.Add(second);
+                  tovary.Add(second);
+
+                  Console.WriteLine("************************************************");
+
+                  Batch fir = new Batch();
+                  fir.NAME = "Молоко";
+                  fir.PRICE = 25.7;
+                  fir.NUMBER = 10;
+                  fir.DATE_OF_MANUFACTURE = "12.11.2014";
+                  fir.DATE_OF_EXPIRATION = "12.11.2015";
+
+                  fir.print_information();
+
+                  if (fir.is_expiration_date("12.10.2015"))
+                  {
+                      Console.WriteLine("срок вышел");
+                  }
+                  else
+                  {
+                      Console.WriteLine("срок не вышел");
+                  }
+                  tovary.Add(fir);
+
+                  Console.WriteLine("************************************************");
+
+                  Set one = new Set();
+                  one.NAME = "Подарочный";
+                  one.PRICE = 20;
+
+                  one.LIST_OF_PROD = lp;
+
+                  if (one.is_expiration_date("12.10.2015"))
+                  {
+                      Console.WriteLine("срок вышел");
+                  }
+                  else
+                  {
+                      Console.WriteLine("срок не вышел");
+                  }
+
+                  one.print_information();
+
+                  tovary.Add(one);
+
+                  Console.WriteLine("************************************************");
+
+                  //работаем с базой
+                  //выводим всю на экран
+                  Console.WriteLine("Товары в базе:");
+
+                  foreach(Commodity it in tovary)
+                  {
+                      it.print_information();
+                  }
+
+
+                  //поиск просроченных товаров в базе
+                  int n = 0;
+                  foreach (Commodity it in tovary)
+                  {
+                      if (it.is_expiration_date("12.10.2015"))
+                      {
+                          Console.WriteLine("{0} - срок вышел.", it.NAME);
+                          n++;
+                      }
+                  }
+                  if(n==0)
+                  {
+                      Console.WriteLine("Срок годности у всех товарв не вышел");
+                  }
+                  */
+        }
+    }
+}
+
