@@ -1,4 +1,5 @@
 /*
+Доделать
  Создать класс «самолет», содержащий следующие закрытые поля: название пункта назначения, шестизначный номер рейса, время отправления. 
  Обеспечить проверку на правильность ввода данных. Предусмотреть свойства для получения состояния объекта. 
 Создать класс «Аэропорт», содержащий закрытый массив самолетов. Обеспечить следующие возможности: 
@@ -60,7 +61,8 @@ namespace Task
             set
             {
 
-                number = value;
+                number = value; //по условию номер должен быть шестизначным, тут надо делать проверку на количество 
+                // символов в номере
 
             }
         }
@@ -93,6 +95,8 @@ namespace Task
             set
             {
                 int n = 0;//колличество цифр
+                // цикл для подсчета количества цифр я бы вынесла в отдельный закрытый метод
+                // и вызывала бы его также для расчета количества цифр в номере
                 int num = value;
                 do
                 {
@@ -150,6 +154,7 @@ namespace Task
             {
                 Airplane[] tmp = new Airplane[num];//временный массив
                 tmp = mass;//сохраняем текущий массив во временный
+                // не забывайте, что при копировании массивов вы скопировали ссылку, а не значения
                 mass = new Airplane[num + 1];//создаём новый массив длиннее старого на 1 
 
                 for (int i = 0; i < num + 1; i++)
@@ -255,7 +260,7 @@ namespace Task
                 Console.WriteLine("Name: {0}", it.NAME);
                 Console.WriteLine("Destination: {0}", it.DESTINATION);
                 Console.WriteLine("Number: {0}", it.NUMBER);
-                Console.WriteLine("Hours: {0}", it.HOURS);
+                Console.WriteLine("Hours: {0}", it.HOURS); // совместите вывод часов и минут, чтобы по-человечески время выглядело
                 Console.WriteLine("Minutes: {0}", it.MINUTES);
                 Console.WriteLine("***************************");
                 Console.WriteLine();
@@ -312,7 +317,8 @@ namespace Task
                                 n++;
                             } while ((int)num_time != 0);
 
-                            if (n == 6)
+                            if (n == 6) // проверку на проавильность ввода должен делать сам класса
+                            // а точнее свойство для установки номера
                             {
                                 obj.NUMBER = num;
                             }
@@ -335,8 +341,9 @@ namespace Task
                         do
                         {
                             Console.WriteLine("Enter hour:");
-                            h = int.Parse(Console.ReadLine());
-                            hour = h;
+                            h = int.Parse(Console.ReadLine()); // не могу ввести 9 и не 09.
+                            // везде, где парсите строку в число делайте проверку на искл. ситуацию
+                            hour = h; 
                             do
                             {
                                 hour = hour / 10;
@@ -349,6 +356,7 @@ namespace Task
                             }
                             else
                             {
+                                // проверка на правильность ввода доллжна быть в свойствах
                                 Console.WriteLine("Enter right value for number!");
                                 nn = 0;
                             }
@@ -376,6 +384,7 @@ namespace Task
                             }
                             else
                             {
+                            // проверка на правильность ввода доллжна быть в свойствах
                                 Console.WriteLine("Enter right value for number!");
                                 nnn = 0;
                             }
@@ -386,6 +395,7 @@ namespace Task
                         break;
 
                     case 3:
+                    // забыли сделать проверку на пустоту. при просмотре пустого списка вываливается исключение
                         Minsk_2.print_information();
                         break;
 
