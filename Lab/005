@@ -1,5 +1,5 @@
 //Задание 1
-
+// Доделать
 /*Реализовать класс для хранения комплексного числа и т.д.
  Выполнить перегрузку всех операторов, необходимых для реализации выделенного
  в main кода*/
@@ -41,7 +41,7 @@ namespace Task_1
         public static Complex operator -(Complex first, int num)
         {
             Complex f = first;
-            Complex s = new Complex(num, 0);
+            Complex s = new Complex(num, 0); //вместо конструктора сделайте перегрузку оператора приведения
             return f - s;
         }
 
@@ -85,7 +85,7 @@ namespace Task_1
             Complex z = new Complex(1, 1);
             z.show();
             Complex zl;
-            zl = z - (z * z * z - 1) / (3 * z * z);
+            zl = z - (z * z * z - 1) / (3 * z * z); //ай-ай, а как же метод  Math.Pow() для возведения в степень?
             Console.Write("zl = ");
             zl.show();
 
@@ -101,11 +101,11 @@ namespace Task_1
             Console.WriteLine("a*b");
             c.show();
             Console.WriteLine("___________________________");
-            Complex v = a / b;
+            Complex v = a / b; // старайтесь большие дробные числа округлять до 2-3 знаков после запятой
             Console.WriteLine("a/b");
             v.show();
             Console.WriteLine("___________________________");
-            Complex w = a - b;
+            Complex w = a - b; //ответ получается  - 2 + - 2 i. + на - дает минут. тут по-хорошему надо один знак операции
             Console.WriteLine("a-b");
             w.show();
             Console.WriteLine("___________________________");
@@ -122,7 +122,7 @@ namespace Task_1
 
 
 //Задание 2
-
+// Доделать
 /*Реализовать класс для дроби и перегрузить все стандартные операторы
 и операторы, необходимые для реализации выделенного кода в main*/
 
@@ -351,7 +351,10 @@ namespace Task_2
                 b.show();
 
                 Fraction m = c + b;
-                Console.Write("fraction c + fraction b = ");
+                Console.Write("fraction c + fraction b = "); //сложано разобрать результат работы программы. 
+                // надо, чтобы на экран выводилить не слова "дробь а + дробь б =", а подставлялись введенные дроби
+                // 1/2 + 1/3
+                // и везде необходимо сделать сокращения дробей, предлагаю создать для этого спец. метод
                 m.show();
                 Console.WriteLine("_____________");
 
