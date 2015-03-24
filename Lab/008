@@ -1,0 +1,424 @@
+/*
+ 3. Реализовать программу “Строительство дома”.
+Реализовать классы House, Basement, Walls, Door, Window, Roof, Worker, TeamLeader, Team и интерфейсы IWorker, IPart. 
+  Все части дома должны реализовать интерфейс IPart, для рабочих и бригадира предоставляется базовый интерфейс IWorker. 
+  Бригада строителей (Team) строит дом (House). 
+  Дом состоит из фундамента (Basement), стен (Wall), окон (Window), дверей (Door), крыши (Part). 
+  Согласно проекту, в доме должно быть 1 фундамент, 4 стены, 1 дверь, 4 окна и 1 крыша.
+Бригада начинает работу, и строители последовательно “строят” дом, начиная с фундамента. 
+  Каждый строитель не знает заранее, на чём завершился предыдущий этап строительства, поэтому он “проверяет”, 
+  что уже построено и продолжает работу. Если в игру вступает бригадир (TeamLeader), он не строит, а формирует отчёт, 
+  что уже построено и какая часть работы выполнена.
+В конечном итоге на консоль выводится сообщение, что строительство дома завершено и отображается “рисунок дома” (циклами).
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task
+{
+    //для строителей
+    public interface IWorker
+    {
+        void work();//проверять этап работы
+    }
+
+    //для частей дома
+    public interface IPart
+    {
+        void build();
+    }
+
+    public class House
+    {
+        public static int bas;//сколько фундаментов
+        public static int result_basement = 1;//сколько должно быть фундаментов
+        public static int door;//сколько дверей
+        public static int result_door = 1;//сколько должно быть
+        public static int window;//сколько окон
+        public static int result_window = 4;//сколько должно быть
+        public static int wall;//сколько стен
+        public static int result_wall = 4;//сколько должно быть
+        public static int roof;//сколько крыш
+        public static int result_roof = 1;//сколько должно быть
+        public House()
+        {
+            bas = 0;
+        }
+    }
+
+    public class Basement : IPart
+    {
+        public Basement()
+        {
+            House.bas++;//добавляем фундамент
+        }
+
+        public void build()
+        {
+
+        }
+    }
+
+    public class Door : IPart
+    {
+        public Door()
+        {
+            House.door++;//добавляем дверь
+        }
+        public void build()
+        {
+
+        }
+    }
+
+    public class Window : IPart
+    {
+        public Window()
+        {
+            House.window++;
+        }
+        public void build()
+        {
+
+        }
+    }
+
+    public class Wall : IPart
+    {
+        public Wall()
+        {
+            House.wall++;
+        }
+        public void build()
+        {
+
+        }
+    }
+
+    public class Roof : IPart
+    {
+        public Roof()
+        {
+            House.roof++;
+        }
+        public void build()
+        {
+
+        }
+    }
+
+    //Бригада строителей
+    public class Team
+    {
+        public static int t_m = 0;//количество работниковц
+        public Team() { }
+    }
+
+    public class Worker : IWorker
+    {
+        public Worker()
+        {
+            Team.t_m++;
+        }
+
+        public void work()//проверять этап работы
+        {
+            if (House.bas != House.result_basement)//если фундаментов меньше, чем должно быть
+            {
+                //строим фундамент
+
+                Console.WriteLine();
+                Console.WriteLine("Basement:");
+                Console.WriteLine();
+                Basement b = new Basement();
+                const int x = 9;
+                for (int i = 0; i < 1; i++)
+                {
+                    for (int j = 0; j < x; j++)
+                    {
+                        if (j == 0)
+                        {
+                            Console.Write(" ");
+                        }
+                        if ((j > 0) && (j < x - 1))
+                        {
+                            Console.Write("z");
+                        }
+                        if (j == (x - 1))
+                        {
+                            Console.WriteLine(" ");
+                        }
+                    }
+                }
+                Console.WriteLine();
+            }
+            else//если фундаментов достаточно
+            {
+                //проверяем дальше
+                if (House.wall != House.result_wall)//если стен меньше, чем должно быть
+                {
+                    //строим
+                    Console.WriteLine();
+                    Console.WriteLine("Wall:");
+                    Console.WriteLine();
+                    Wall w = new Wall();
+
+                    const int x = 9;
+                    const int y = 11;
+
+                    for (int i = 0; i < y; i++)
+                    {
+
+                        for (int j = 0; j < x; j++)
+                        {
+                            
+                            if ((i > x / 2 + 1) && (i < (y - 2)))//рисуем стену
+                            {
+                                if (j <= 1)
+                                {
+                                    Console.Write(" ");
+                                }
+                                if ((j > 2) && (j < (x - 1)))
+                                {
+                                    Console.Write("u");
+                                }
+                                if (j == (x - 1))
+                                {
+                                    Console.WriteLine(" ");
+                                }
+                            }
+                            if (i == (y - 1))//рисуем фундамент
+                            {
+                                if (j == 0)
+                                {
+                                    Console.Write(" ");
+                                }
+                                if ((j > 0) && (j < x - 1))
+                                {
+                                    Console.Write("z");
+                                }
+                                if (j == (x - 1))
+                                {
+                                    Console.WriteLine(" ");
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //проверяем дальше
+                    if (House.window != House.result_window)//если окон меньше, чем должно быть
+                    {
+                        //строим
+                        Console.WriteLine();
+                        Console.WriteLine("Window:");
+                        Console.WriteLine();
+                        Window win = new Window();
+
+
+
+
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        //проверяем дальше
+                        if (House.door != House.result_door)//если дверей меньше, чем должно быть
+                        {
+                           //строим
+                            Console.WriteLine();
+                            Console.WriteLine("Door:");
+                            Console.WriteLine();
+                            Door d = new Door();
+
+
+
+
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            //проверяем дальше
+                            if (House.roof != House.result_roof)//если дверей меньше, чем должно быть
+                            {
+                                //строим
+                                Console.WriteLine();
+                                Console.WriteLine("Roof:");
+                                Console.WriteLine();
+                                Roof r = new Roof();
+
+                                //рисуем домик)))
+                                const int x = 9;
+                                const int y = 11;
+                                int step = 0;
+
+                                for (int i = 0; i < y; i++)
+                                {
+
+                                    for (int j = 0; j < x; j++)
+                                    {
+                                        if (i <= x / 2 + 1)//рисуем крышу
+                                        {
+                                            if (j <= x / 2 - step)
+                                            {
+                                                Console.Write(" ");
+                                            }
+                                            if ((j > x / 2 - step) && (j < x / 2 + step))
+                                            {
+                                                Console.Write("*");
+                                            }
+                                            if (j >= (x / 2 + step))
+                                            {
+                                                Console.Write(" ");
+                                            }
+                                            if (j == (x - 1))
+                                            {
+                                                Console.WriteLine(" ");
+                                            }
+                                        }
+                                        if ((i > x / 2 + 1) && (i < (y - 2)))//рисуем стену
+                                        {
+                                            if (j <= 1)
+                                            {
+                                                Console.Write(" ");
+                                            }
+                                            if ((j > 2) && (j < (x - 1)))
+                                            {
+                                                Console.Write("u");
+                                            }
+                                            if (j == (x - 1))
+                                            {
+                                                Console.WriteLine(" ");
+                                            }
+                                        }
+                                        if (i == (y - 1))//рисуем фундамент
+                                        {
+                                            if (j == 0)
+                                            {
+                                                Console.Write(" ");
+                                            }
+                                            if ((j > 0) && (j < x - 1))
+                                            {
+                                                Console.Write("z");
+                                            }
+                                            if (j == (x - 1))
+                                            {
+                                                Console.WriteLine(" ");
+                                            }
+                                        }
+                                    }
+
+
+                                    step++;
+                                }
+
+                                Console.WriteLine();
+                            }
+                            else
+                            {
+                                Console.WriteLine("House is ready!");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public class TeamLeader : IWorker
+    {
+        public TeamLeader() { }
+        public void work()//работать
+        {
+            if ((House.bas == House.result_basement) && (House.door == House.result_door) && (House.window == House.result_window) && (House.wall == House.result_wall) && (House.roof == House.result_roof))
+            {
+                Console.WriteLine("House is ready!");
+            }
+            else
+            {
+                Console.WriteLine("In your team now 1 Teamlider and {0} workers!", Team.t_m);
+                Console.WriteLine("Basement - {0}", House.bas);
+                Console.WriteLine("Doors - {0}", House.door);
+                Console.WriteLine("Windows - {0}", House.window);
+                Console.WriteLine("Walls - {0}", House.wall);
+                Console.WriteLine("Roofs - {0}", House.roof);
+                Console.WriteLine();
+            }
+        }
+    }
+
+
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            TeamLeader lider = new TeamLeader();
+            Console.WriteLine("Teamlider:\"Welcome to the home construction!\"");
+
+            Console.WriteLine("How many workers must be in the team?");
+            int workers_number;
+            while (!int.TryParse(Console.ReadLine(), out workers_number)) { Console.WriteLine("Enter right value:"); }
+
+            Team team = new Team();
+
+            for (int i = 0; i < workers_number; i++)
+            {
+                Worker men_x = new Worker();
+            }
+
+            Worker men = new Worker();
+
+            Console.WriteLine("In your team now 1 Teamlider and {0} workers!", Team.t_m);
+
+            House home = new House();//создаём дом
+
+            int choice;
+            int ch;
+
+            do
+            {
+                do
+                {
+                    Console.WriteLine("What do you want to do?");
+                    Console.WriteLine("1 - building");
+                    Console.WriteLine("2 - exit");
+                    Console.WriteLine("Enter your choice:");
+                    while (!int.TryParse(Console.ReadLine(), out ch)) { Console.WriteLine("Enter right value:"); }
+                } while ((ch < 1) || (ch > 2));//пока не будет выбран верный вариант
+
+                switch (ch)
+                {
+                    case 1:
+                        do
+                        {
+                            Console.WriteLine("Who must to work now: ");
+                            Console.WriteLine("1 - teamleader");
+                            Console.WriteLine("2 - worker");
+                            while (!int.TryParse(Console.ReadLine(), out choice)) { Console.WriteLine("Enter right value:"); }
+                        } while ((choice < 1) || (choice > 2));
+
+                        switch (choice)
+                        {
+                            case 1:
+                                lider.work();
+                                break;
+                            case 2:
+                                men.work();
+                                break;
+                        }
+                        break;
+                    case 2:
+                        return;
+                        break;
+                }
+
+            } while (ch != 2);
+        }
+    }
+}
