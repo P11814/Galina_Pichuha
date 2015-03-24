@@ -105,6 +105,20 @@ namespace Task_1
     }
     class Program
     {
+    //перенесла проверку в функцию
+    public static bool is_list_empty(List<Student> st)
+        {
+            if (st.Count == 0)
+            {
+                Console.WriteLine("List is empty!");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    
         static void Main(string[] args)
         {
             Console.WriteLine("Hello!");
@@ -144,17 +158,30 @@ namespace Task_1
                         patronymic = Console.ReadLine();
 
                         Console.WriteLine("Enter group:");
+                        Console.WriteLine("Enter group:");
+                        try
+                        {
                         group = int.Parse(Console.ReadLine());
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Parse Error!");
+                        }
 
                         Student first = new Student(name, ln, patronymic, group);
                         students.Add(first);
                         break;
 
                     case 1:
-                        if(students.Count==0) // вы 3 раза проверяете студентов на пустоту. надо этот код помещать в 
+                        //if(students.Count==0) // вы 3 раза проверяете студентов на пустоту. надо этот код помещать в 
                         // функцию, либо поместить его выше switch, чтобы не повторять так много раз.
+                        //{
+                           // Console.WriteLine("List is empty!");
+                           // break;
+                        //}
+                        
+                        if (is_list_empty(students))
                         {
-                            Console.WriteLine("List is empty!");
                             break;
                         }
 
@@ -164,6 +191,8 @@ namespace Task_1
                         Console.WriteLine("Enter subject:");
                         sub = int.Parse(Console.ReadLine());
                         Console.WriteLine("Enter mark:");
+                        try
+                        {
                         m = int.Parse(Console.ReadLine());
 
                         //поиск студента в массиве
@@ -174,12 +203,15 @@ namespace Task_1
                                 it.set_raiting(sub, m);
                             }
                         }
+                        catch 
+                        {
+                            Console.WriteLine("Parse Error!");
+                        }
                         break;
 
                     case 2:
-                        if (students.Count == 0)
+                        if (is_list_empty(students))
                         {
-                            Console.WriteLine("List is empty!");
                             break;
                         }
 
@@ -197,9 +229,8 @@ namespace Task_1
                         break;
 
                     case 3:  //здесь программы вываливается
-                        if (students.Count == 0)
+                        if (is_list_empty(students))
                         {
-                            Console.WriteLine("List is empty!");
                             break;
                         }
 
@@ -211,9 +242,16 @@ namespace Task_1
                             if (it.last_name == ln)
                             {
                                 Console.WriteLine("Enter subject:");
+                                try
+                                {
                                 sub = int.Parse(Console.ReadLine()); // каждый раз при парсинге строки в целое надо добавлять 
                                 //обработку искл. ситуации
-                                it.get_GPA(sub);
+                                Console.WriteLine("GPA: {0}", it.get_GPA(sub));
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Parse Error!");
+                                }
                             }
                         }
                         break;
