@@ -51,6 +51,22 @@ namespace Task
                 destination = value;
             }
         }
+        
+        
+        //метод для подсчёта цифр
+        public int number_of_number(int nm)
+        {
+            int n = 0;//колличество цифр
+            int num_time=nm;
+            do
+            {
+                num_time = num_time / 10;
+                n++;
+            } while ((int)num_time != 0);
+            return n;
+        }
+        
+        
 
         public int NUMBER
         {
@@ -59,11 +75,24 @@ namespace Task
                 return number;
             }
             set
-            {
+            {int num;
+                int n;
+                do
+                {
+                    Console.WriteLine("Enter number: xxxxxx");
+                    num = int.Parse(Console.ReadLine());
+                    n=number_of_number(num);
 
-                number = value; //по условию номер должен быть шестизначным, тут надо делать проверку на количество 
-                // символов в номере
-
+                    if (n == 6)
+                    {
+                        number = num;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter right value for number!");
+                        n = 0;
+                    }
+                } while (n != 6); 
             }
         }
 
@@ -75,14 +104,28 @@ namespace Task
             }
             set
             {
-                if ((value < 0) || (value > 24))
+                int h;
+                int hour;
+                
+                do
                 {
-                    Console.WriteLine("Enter right value for hours!");
-                }
-                else
-                {
-                    hours = value;
-                }
+                    Console.WriteLine("Enter hour:");
+                    h = int.Parse(Console.ReadLine());
+                    hour = number_of_number(h);
+
+                    if ((hour == 2) || (hour == 1))
+                    {
+                        if ((h > 0) && (h <= 24))
+                        {
+                            hours = h;
+                        }
+                    }
+                    
+                    else
+                    {
+                        Console.WriteLine("Enter right value for number!");
+                    }
+                } while ((hour > 2) && (hour < 1));
             }
         }
 
@@ -94,24 +137,27 @@ namespace Task
             }
             set
             {
-                int n = 0;//колличество цифр
-                // цикл для подсчета количества цифр я бы вынесла в отдельный закрытый метод
-                // и вызывала бы его также для расчета количества цифр в номере
-                int num = value;
+                int m;
+                int min;
+
                 do
                 {
-                    num = num / 10;
-                    n++;
-                } while ((int)num != 0);
+                    Console.WriteLine("Enter minutes: xx");
+                    m = int.Parse(Console.ReadLine());
+                    min = number_of_number(m);
 
-                if (((value < 0) || (value > 59)) && (num != 2))
-                {
-                    Console.WriteLine("Enter right value for hours!");
-                }
-                else
-                {
-                    minutes = value;
-                }
+                    if ((min == 2) || (min == 1))
+                    {
+                        if ((m > 0) && (m < 60))
+                        {
+                            minutes = m;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter right value for number!");
+                    }
+                } while ((min > 2) && (min < 1));
             }
         }
 
@@ -155,6 +201,8 @@ namespace Task
                 Airplane[] tmp = new Airplane[num];//временный массив
                 tmp = mass;//сохраняем текущий массив во временный
                 // не забывайте, что при копировании массивов вы скопировали ссылку, а не значения
+                
+                //Я про это помню, но здесь я не хочу создавать копию для простого сравнения, поэтому копирую ссылку
                 mass = new Airplane[num + 1];//создаём новый массив длиннее старого на 1 
 
                 for (int i = 0; i < num + 1; i++)
@@ -253,6 +301,12 @@ namespace Task
         public void print_information()
         {
             Console.WriteLine("Information about all the airplans of airport:");
+            if(mass.Length==0)
+            {
+                Console.WriteLine("List is empty!");
+            }
+            else
+            {
             foreach (Airplane it in mass)
             {
                 Console.WriteLine();
@@ -260,10 +314,11 @@ namespace Task
                 Console.WriteLine("Name: {0}", it.NAME);
                 Console.WriteLine("Destination: {0}", it.DESTINATION);
                 Console.WriteLine("Number: {0}", it.NUMBER);
-                Console.WriteLine("Hours: {0}", it.HOURS); // совместите вывод часов и минут, чтобы по-человечески время выглядело
-                Console.WriteLine("Minutes: {0}", it.MINUTES);
+                // совместите вывод часов и минут, чтобы по-человечески время выглядело
+                Console.WriteLine("Time: {0} : {1}", it.HOURS, it.MINUTES);
                 Console.WriteLine("***************************");
                 Console.WriteLine();
+            }
             }
         }
     }
@@ -301,67 +356,14 @@ namespace Task
                         Console.WriteLine("Enter name:");
                         obj.NAME = Console.ReadLine();
 
-                        int n = 0;//колличество цифр
-                        int num;
-                        int num_time;
+                        obj.NUMBER = 1;//присваиваем любое значение, чтобы попасть в свойство, а там сделать проверку на ввод    
 
-                        do
-                        {
-                            Console.WriteLine("Enter number: xxxxxx");
-                            num = int.Parse(Console.ReadLine());
-                            num_time = num;
-
-                            do
-                            {
-                                num_time = num_time / 10;
-                                n++;
-                            } while ((int)num_time != 0);
-
-                            if (n == 6) // проверку на проавильность ввода должен делать сам класса
-                            // а точнее свойство для установки номера
-                            {
-                                obj.NUMBER = num;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Enter right value for number!");
-                                n = 0;
-                            }
-                        } while (n != 6);       
-
-
-                        
-                        
                         Console.WriteLine("Enter destination:");
                         obj.DESTINATION = Console.ReadLine();
 
-                        int h;
-                        int hour;
-                        int nn=0;
-                        do
-                        {
-                            Console.WriteLine("Enter hour:");
-                            h = int.Parse(Console.ReadLine()); // не могу ввести 9 и не 09.
-                            // везде, где парсите строку в число делайте проверку на искл. ситуацию
-                            hour = h; 
-                            do
-                            {
-                                hour = hour / 10;
-                                nn++;
-                            } while ((int)hour != 0);
-
-                            if (nn == 2)
-                            {
-                                obj.HOURS = h;
-                            }
-                            else
-                            {
-                                // проверка на правильность ввода доллжна быть в свойствах
-                                Console.WriteLine("Enter right value for number!");
-                                nn = 0;
-                            }
-                        } while (nn != 2);
-
+                         obj.HOURS = 1;//присваиваем любое значение, чтобы попасть в свойство, а там сделать проверку на ввод
+                         
+                         obj.MINUTES = 1;
 
                         int m;
                         int min;
