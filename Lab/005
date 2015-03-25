@@ -313,6 +313,48 @@ namespace Task_2
                 return true;
             }
         }
+        
+        //метод для поиска НОД
+        static int nod(int n, int d)
+        {
+            int temp;
+            n = Math.Abs(n);
+            d = Math.Abs(d);
+            while (d != 0 && n != 0)
+            {
+                if (n % d > 0)
+                {
+                    temp = n;
+                    n = d;
+                    d = temp % d;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            if (d != 0 && n != 0)
+            {
+                return d;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+
+        //метод для сокращения дробей
+        public Fraction ToReduce(Fraction fraction)
+        {
+            int n = nod(fraction.numerator, fraction.denominator);
+            if (n != 0)
+            {
+                fraction.numerator /= n;
+                fraction.denominator /= n;
+            }
+            return fraction;
+        }
 
         public void show()
         {
@@ -347,74 +389,98 @@ namespace Task_2
 
                 Console.Write("Fraction c = ");
                 c.show();
+                c = c.ToReduce(c);
+                c.show();
                 Console.Write("Fraction b = ");
+                b.show();
+                b = b.ToReduce(b);
                 b.show();
 
                 Fraction m = c + b;
-                Console.Write("fraction c + fraction b = "); //сложано разобрать результат работы программы. 
+                //Console.Write("fraction c + fraction b = "); //сложано разобрать результат работы программы. 
                 // надо, чтобы на экран выводилить не слова "дробь а + дробь б =", а подставлялись введенные дроби
                 // 1/2 + 1/3
                 // и везде необходимо сделать сокращения дробей, предлагаю создать для этого спец. метод
+                Console.Write("{0}/{1} + {2}/{3} = ", c_num, c_den, b_num, b_den);
+                m = m.ToReduce(m);
                 m.show();
                 Console.WriteLine("_____________");
 
                 Fraction n = c - b;
-                Console.Write("fraction c - fraction b = ");
+                //Console.Write("fraction c - fraction b = ");
+                Console.Write("{0}/{1} - {2}/{3} = ", c_num, c_den, b_num, b_den);
+                n = n.ToReduce(n);
                 n.show();
                 Console.WriteLine("_____________");
 
                 Fraction v = c * b;
-                Console.Write("fraction c * fraction b = ");
+                //Console.Write("fraction c * fraction b = ");
+                Console.Write("{0}/{1} * {2}/{3} = ", c_num, c_den, b_num, b_den);
+                v = v.ToReduce(v);
                 v.show();
                 Console.WriteLine("_____________");
 
                 Fraction z = c / b;
-                Console.Write("fraction c / fraction b = ");
+                //Console.Write("fraction c / fraction b = ");
+                Console.Write("{0}/{1} : {2}/{3} = ", c_num, c_den, b_num, b_den);
+                z = z.ToReduce(z);
                 z.show();
                 Console.WriteLine("_____________");
 
                 if (b == c)
                 {
-                    Console.WriteLine("fraction b = fraction c");
+                    //Console.WriteLine("fraction b = fraction c");
+                    Console.Write("{0}/{1} = {2}/{3}", b_num, b_den, c_num, c_den);
                 }
                 else
                 {
-                    Console.WriteLine("fraction b != fraction c");
+                    //Console.WriteLine("fraction b != fraction c");
+                    Console.Write("{0}/{1} != {2}/{3}", b_num, b_den, c_num, c_den);
                 }
-
+                
+                Console.WriteLine();
                 Console.WriteLine("_____________");
 
                 if (b != c)
                 {
-                    Console.WriteLine("fraction b != fraction c");
+                    //Console.WriteLine("fraction b != fraction c");
+                    Console.Write("{0}/{1} != {2}/{3}", b_num, b_den, c_num, c_den);
                 }
                 else
                 {
-                    Console.WriteLine("fraction b = fraction c");
+                    //Console.WriteLine("fraction b = fraction c");
+                    Console.Write("{0}/{1} = {2}/{3}", b_num, b_den, c_num, c_den);
                 }
-
+                
+                Console.WriteLine();
                 Console.WriteLine("_____________");
 
                 if (b < c)
                 {
-                    Console.WriteLine("fraction b < fraction c");
+                    //Console.WriteLine("fraction b < fraction c");
+                    Console.Write("{0}/{1} < {2}/{3}", b_num, b_den, c_num, c_den);
                 }
                 else
                 {
-                    Console.WriteLine("fraction b > fraction c");
+                    //Console.WriteLine("fraction b > fraction c");
+                    Console.Write("{0}/{1} > {2}/{3}", b_num, b_den, c_num, c_den);
                 }
-
+                
+                Console.WriteLine();
                 Console.WriteLine("_____________");
 
                 if (b > c)
                 {
-                    Console.WriteLine("fraction b > fraction c");
+                    //Console.WriteLine("fraction b > fraction c");
+                    Console.Write("{0}/{1} > {2}/{3}", b_num, b_den, c_num, c_den);
                 }
                 else
                 {
-                    Console.WriteLine("fraction b < fraction c");
+                    //Console.WriteLine("fraction b < fraction c");
+                    Console.Write("{0}/{1} < {2}/{3}", b_num, b_den, c_num, c_den);
                 }
-
+                
+                Console.WriteLine();
                 Console.WriteLine("_____________");
 
                 if (b)//если неправильная
@@ -442,16 +508,19 @@ namespace Task_2
             int a = 10;
 
             Console.Write("Fraction f = ");
+            f = f.ToReduce(f);
             f.show();
             Console.WriteLine("a = 10");
 
             Fraction f1 = f * a;
             Console.Write("fraction f * a = ");
+            f1 = f1.ToReduce(f1);
             f1.show();
             Console.WriteLine("_____________");
 
             Fraction f2 = a * f;
             Console.Write("a * fraction f = ");
+            f2 = f2.ToReduce(f2);
             f2.show();
             Console.WriteLine("_____________");
 
@@ -460,6 +529,7 @@ namespace Task_2
 
             Console.WriteLine("d = 1.5");
             Console.Write("fraction f + d= ");
+            f3 = f3.ToReduce(f3);
             f3.show();
         }
     }
