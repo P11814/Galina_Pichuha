@@ -133,6 +133,24 @@ namespace Task
             }
 
         }
+        
+        
+        private void date_expr(string de)
+        {
+            if (Parse(de) != null)
+            {
+                List<int> d_m = Parse(de);
+                int d, m, y;
+                d = d_m[0];
+                m = d_m[1];
+                y = d_m[2];
+                if ((d <= 31) && (d > 0) && (m <= 12) && (m > 0) && (y > 2000) && (y < 2016))
+                {
+                    date_of_expiration = de;
+                }
+            }
+        }
+        
 
         public String DATE_OF_EXPIRATION
         {
@@ -142,18 +160,7 @@ namespace Task
             }
             set
             {
-                if (Parse(value) != null)
-                {
-                    List<int> d_m = Parse(value);
-                    int d, m, y;
-                    d = d_m[0];
-                    m = d_m[1];
-                    y = d_m[2];
-                    if ((d <= 31) && (d > 0) && (m <= 12) && (m > 0) && (y > 2000) && (y < 2016))
-                    {
-                        date_of_expiration = value;
-                    }
-                }
+               date_expr(value); 
             }
         }
 
@@ -309,9 +316,32 @@ namespace Task
             }
 
         }
+        
+        
+        private void date_expr(string de)
+        {
+            if (Parse(de) != null)
+            {
+                List<int> d_m = Parse(de);
+                int d, m, y;
+                d = d_m[0];
+                m = d_m[1];
+                y = d_m[2];
+                if ((d <= 31) && (d > 0) && (m <= 12) && (m > 0) && (y > 2000) && (y < 2016))
+                {
+                    date_of_expiration = de;
+                }
+            }
+        }
+        
 
         public String DATE_OF_EXPIRATION //точно такое же свойство, как и выше. код идентичный. лучше повторяющийся код
         // помещать в отдельный закрытый метод, а в свойствах этот метод вызывать
+        
+        //Правильно ли я Вас поняла? Сделать закрытые методы в каждом классе, где есть свойство DATE_OF_EXPIRATION? 
+        //Тогда код всё равно будет повторяться.
+        //Сделать такой метод в базовом классе я не могу, потому что свойство DATE_OF_EXPIRATION есть не во всех классах, 
+        //которые наследуются от базового. 
         {
             get
             {
@@ -319,18 +349,7 @@ namespace Task
             }
             set
             {
-                if (Parse(value) != null)
-                {
-                    List<int> d_m = Parse(value);
-                    int d, m, y;
-                    d = d_m[0];
-                    m = d_m[1];
-                    y = d_m[2];
-                    if ((d <= 31) && (d > 0) && (m <= 12) && (m > 0) && (y > 2000))
-                    {
-                        date_of_expiration = value;
-                    }
-                }
+                date_expr(value);
             }
         }
 
@@ -516,6 +535,13 @@ namespace Task
         //вам не надо так много массивов, только один
         //типа Commodity, в которо будут храниться все производных объекты
         //доделайте
+        
+        //У меня в абстрактном классе Commodity есть абстрактные методы print_information и is_expiration_date, 
+        //которые переопределяются в производных классах. Что именно нужно доделать?
+        
+        //Массив типа Commodity у меня есть - он для хранения всех объектов, а другие - для простоты работы
+        //с объектами определённого типа. Если мне нужны только, например, наборы, то проще взять массив наборов,
+        //чем искать их в куче всего. Хотя, конечно, массивы занимают время.
             //массив для хранения продуктов
             List<Product> lp = new List<Product>();
 
