@@ -80,7 +80,7 @@ namespace Task
                 do
                 {
                     Console.WriteLine("Enter number: xxxxxx");
-                    num = int.Parse(Console.ReadLine());
+                    while (!int.TryParse(Console.ReadLine(), out num)) { Console.WriteLine("Enter right value:"); }
                     n=number_of_number(num);
 
                     if (n == 6)
@@ -110,7 +110,7 @@ namespace Task
                 do
                 {
                     Console.WriteLine("Enter hour:");
-                    h = int.Parse(Console.ReadLine());
+                    while (!int.TryParse(Console.ReadLine(), out h)) { Console.WriteLine("Enter right value:"); }
                     hour = number_of_number(h);
 
                     if ((hour == 2) || (hour == 1))
@@ -143,7 +143,7 @@ namespace Task
                 do
                 {
                     Console.WriteLine("Enter minutes: xx");
-                    m = int.Parse(Console.ReadLine());
+                    while (!int.TryParse(Console.ReadLine(), out m)) { Console.WriteLine("Enter right value:"); }
                     min = number_of_number(m);
 
                     if ((min == 2) || (min == 1))
@@ -365,33 +365,6 @@ namespace Task
                          
                          obj.MINUTES = 1;
 
-                        int m;
-                        int min;
-                        int nnn=0;
-                        
-                        do
-                        {
-                            Console.WriteLine("Enter minutes: xx");
-                            m = int.Parse(Console.ReadLine());
-                            min = m;
-                            do
-                            {
-                                min = min / 10;
-                                nnn++;
-                            } while ((int)min != 0);
-
-                            if (nnn == 2)
-                            {
-                                obj.MINUTES = m;
-                            }
-                            else
-                            {
-                            // проверка на правильность ввода доллжна быть в свойствах
-                                Console.WriteLine("Enter right value for number!");
-                                nnn = 0;
-                            }
-                        } while (nnn != 2);
-
                         Minsk_2.ADD = obj;//добавляем самолёт
                         Console.WriteLine("Airplane was added!");
                         break;
@@ -404,6 +377,7 @@ namespace Task
                     case 4:
                         Console.WriteLine("Enter number of airplane:");
                         int number = int.Parse(Console.ReadLine());
+                        while (!int.TryParse(Console.ReadLine(), out number)) { Console.WriteLine("Enter right value:"); }
                         if (Minsk_2[number] == null)
                         {
                             Console.WriteLine();
@@ -427,6 +401,7 @@ namespace Task
                         //поиск по времени (в течение часа после заданного времени)
                         Console.WriteLine("Enter hour:");
                         int hours = int.Parse(Console.ReadLine());
+                        while (!int.TryParse(Console.ReadLine(), out hours)) { Console.WriteLine("Enter right value:"); }
                         Console.WriteLine("Enter minutes:");
                         int minutes = int.Parse(Console.ReadLine());
 
