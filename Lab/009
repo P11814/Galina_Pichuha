@@ -1,0 +1,49 @@
+/*
+ 1.	Подсчитать, сколько раз каждое слово встречается в заданном тексте. Результат записать в коллекцию Dictionary <TKey, TValue>
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string text;//вводимые текст
+            string[] str;//массив для хранения слов из текста 
+            Dictionary<string, int> dict = new Dictionary<string, int>();//коллекция для хранения слов и их количества
+
+            Console.WriteLine("Enter text:");
+            text = Console.ReadLine();
+
+            List<string>list=new List<string>();
+            str = text.Split(new Char[] { ' ', ',', '.', '!', '?' });
+
+            foreach (string it in str)
+            {
+                if (!dict.ContainsKey(it))//если такого ключа в коллекции нет
+                {
+                    dict.Add(it, 1);//записываем слово и задаём значение - количество таких слов
+                }
+                else//если ключ есть
+                {
+                    foreach (KeyValuePair<string, int> kvp in dict)
+                    {
+                        dict[it] = kvp.Value + 1;
+                        break;
+                    }
+
+                }
+            }
+            foreach (KeyValuePair<string, int> kvp in dict)
+            {
+                Console.WriteLine("{0} - {1}", kvp.Key, kvp.Value);
+            }
+        }
+    }
+}
