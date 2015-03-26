@@ -38,18 +38,27 @@ namespace Task_1
 
         //приводим обычное число к комплексному и упрощаем
         // x + yi + n = (x + yi) + (n + oi) = (x+n) + yi
-        public static Complex operator -(Complex first, int num)
+        //public static Complex operator -(Complex first, int num)
+        //{
+            //Complex f = first;
+            //Complex s = new Complex(num, 0); //вместо конструктора сделайте перегрузку оператора приведения
+            //return f - s;
+        //}
+        
+        //неявное преобразование
+        public static implicit operator Complex(int i)
         {
-            Complex f = first;
-            Complex s = new Complex(num, 0); //вместо конструктора сделайте перегрузку оператора приведения
-            return f - s;
+            Complex s = new Complex(i, 0);
+            return s;
         }
 
         public static Complex operator *(Complex first, Complex second)
         {
             Complex res = new Complex();
-            res.x = first.x * second.x - first.y * second.y;
-            res.y = first.x * second.y + first.y * second.x; 
+            //res.x = first.x * second.x - first.y * second.y;
+            //res.y = first.x * second.y + first.y * second.x; 
+            res.x = Math.Round((first.x * second.x - first.y * second.y), 2);
+            res.y = Math.Round((first.x * second.y + first.y * second.x), 2); 
             return res;
         }
 
@@ -58,22 +67,34 @@ namespace Task_1
         public static Complex operator *(int num, Complex second)
         {
             Complex res = new Complex();
-            res.x = second.x * num;
-            res.y = second.y * num;
+            //res.x = second.x * num;
+            //res.y = second.y * num;
+            res.x = Math.Round((second.x * num), 2);
+            res.y = Math.Round((second.y * num), 2);
             return res;
         }
 
         public static Complex operator /(Complex first, Complex second)
         {
             Complex res = new Complex();
-            res.x = (first.x*second.x+first.y*second.y)/(second.x*second.x + second.y*second.y);
-            res.y = (first.y * second.x - first.x * second.y) / (second.x * second.x + second.y * second.y);
+            //res.x = (first.x*second.x+first.y*second.y)/(second.x*second.x + second.y*second.y);
+            //res.y = (first.y * second.x - first.x * second.y) / (second.x * second.x + second.y * second.y);
+            res.x = Math.Round(((first.x*second.x+first.y*second.y)/(second.x*second.x + second.y*second.y)), 2);
+            res.y = Math.Round(((first.y * second.x - first.x * second.y) / (second.x * second.x + second.y * second.y)), 2);
             return res;
         }
 
         public void show()
         {
-            Console.WriteLine("{0} + {1}i", x, y);
+            if(y<0)
+            {
+                //при отрицательном у + меняется на -
+                Console.WriteLine("{0} {1}i", x, y);
+            }
+            else
+            {
+                Console.WriteLine("{0} + {1}i", x, y);
+            }  
         }
     }
 
@@ -86,6 +107,7 @@ namespace Task_1
             z.show();
             Complex zl;
             zl = z - (z * z * z - 1) / (3 * z * z); //ай-ай, а как же метод  Math.Pow() для возведения в степень?
+            //этот код дан по заданию
             Console.Write("zl = ");
             zl.show();
 
