@@ -1,0 +1,260 @@
+//задание 1
+
+/*
+Чтение и запись в файл.
+Написать приложение, позволяющее:
+•	создать новый файл с именем «Day17.txt». В случае наличия файла с таким именем  –  вывести сообщение;
+•	открыть и прочесть файл с именем «Day17.txt». В случае отсутствия – вывести сообщение об отсутствии;
+•	записать форматированную информацию в файл;Структура записываемой информации:
+Исходные данные: двумерный массив дробных чисел.
+                                 двумерный массив  целых чисел.
+   – фамилия, имя, отчество, дата рождения
+   – с новой строки  количество строк и столбцов массива дробных чисел.
+   –  с новой строки  значения элементов двумерного массива (каждая строка массива в новой строке файла). 
+   – с новой строки  количество строк и столбцов массива целых чисел.
+   – с новой строки  двумерный массив  целых чисел, записанных в одну строку. 
+–  с новой строки  текущая дата.
+•	прочесть информацию из файла и преобразовать ее в соответствии с исходной структурой.
+Реализовать простейшее меню.
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+
+namespace Task_1
+{
+    class Program
+    {
+        //создание нового файла
+        static void create_file(string s)
+        {
+            using (FileStream fs = File.Create(s))
+            {
+                Byte[] info = new UTF8Encoding(true).GetBytes("");
+                //записываем первоначальную информацию
+                fs.Write(info, 0, info.Length);
+            }
+        }
+
+        //проверка ввода
+        static int enter_value()
+        {
+            int i;
+            do
+            {
+                while (!int.TryParse(Console.ReadLine(), out i)) { Console.WriteLine("Enter right value!"); }
+            } while (i < 1);
+            return i;
+        }
+
+        static void Main(string[] args)
+        {
+            string file = @"Day17.txt";
+            int choice;
+            int ch;
+
+            //двумерный массив целых чисел
+            int[,] arr;
+            //двумерный массив дробных чисел
+            double[,] arr2;
+
+            do
+            {
+                Console.WriteLine("What do you want to do:");
+                Console.WriteLine("1 - Create new file «Day17.txt»;");
+                Console.WriteLine("2 - Open and read file «Day17.txt»;");
+                Console.WriteLine("3 - Record formatted information in file «Day17.txt»;");
+                Console.WriteLine("4 - Exit.");
+                Console.WriteLine("Enter your choice:");
+                while (!int.TryParse(Console.ReadLine(), out choice)) { Console.WriteLine("Enter right value!"); }
+
+                switch (choice)
+                {
+                    case 1://создаём файл
+                        try
+                        {
+                            //если файл уже существует - удаляем его
+                            if (File.Exists(file))
+                            {
+                                Console.WriteLine("Filem is create already!");
+                                do
+                                {
+                                    Console.WriteLine("1 - delete this file and create new;");
+                                    Console.WriteLine("2 - continue.");
+                                    Console.WriteLine("Enter your choice:");
+                                    while (!int.TryParse(Console.ReadLine(), out ch)) { Console.WriteLine("Enter right value!"); }
+                                } while ((ch < 1) && (ch > 2));
+
+                                switch (ch)
+                                {
+                                    case 1:
+                                        //удаляем существующий файл
+                                        if (File.Exists(file))
+                                        {
+                                            File.Delete(file);
+                                            //создаём новый
+                                            create_file(file);
+                                        }
+                                        break;
+                                    case 2:
+                                        // ничего не делаем
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                //создаём новый
+                                create_file(file);
+                            }
+                        }
+                        catch (IOException exc)
+                        {
+                            Console.WriteLine(exc.Message + "\nError creat File");
+                            return;
+                        }
+                        break;
+
+                    case 2://открываем и читаем файл
+                        try
+                        {
+                            using (StreamReader sr = File.OpenText(file))
+                            {
+                                string s = "";
+                                Console.WriteLine("In the file now:");
+                                while ((s = sr.ReadLine()) != null)
+                                {
+                                    Console.WriteLine(s);
+                                }
+                            }
+                        }
+                        catch (IOException exc)
+                        {
+                            Console.WriteLine(exc.Message);
+                            return;
+                        }
+                        break;
+
+                    case 3://записываем в файл
+                        //фамилия, имя, отчество, дата рождения
+                        string name, last_name, patronymic;
+                        DateTime date_of_birth;
+                        int day, mon, year;
+
+                        Console.WriteLine("Enter name:");
+                        name = Console.ReadLine();
+                        Console.WriteLine("Enter last name:");
+                        last_name = Console.ReadLine();
+                        Console.WriteLine("Enter patronymic:");
+                        patronymic = Console.ReadLine();
+                        do
+                        {
+                            Console.WriteLine("Enter day of birth:");
+                            day = enter_value();
+                        } while ((day < 1) && (day > 31));
+                        do
+                        {
+                            Console.WriteLine("Enter month of birth:");
+                            mon = enter_value();
+                        } while ((mon < 1) && (mon > 12));
+                        do
+                        {
+                            Console.WriteLine("Enter year of birth:");
+                            year = enter_value();
+                        } while (year > 2015);
+
+                        date_of_birth = new DateTime(year, mon, day);
+
+                        int ah, a2h, aw, a2w;
+                        //заполняем массивы
+                        Console.WriteLine("Enter height of array of int:");
+                        ah = enter_value();
+
+                        Console.WriteLine("Enter width of array of int:");
+                        aw = enter_value();
+
+                        Console.WriteLine("Enter height of array of double:");
+                        a2h = enter_value();
+
+                        Console.WriteLine("Enter width of array of double:");
+                        a2w = enter_value();
+
+                        arr = new int[ah, aw];
+                        arr2 = new double[a2h, a2w];
+
+
+                        //заполняем массив целых чисел
+                        Random r = new Random();
+
+                        for (int i = 0; i < ah; i++)
+                        {
+                            for (int j = 0; j < aw; j++)
+                            {
+                                arr[i, j] = r.Next();
+                            }
+                        }
+
+                        //заполняем массив дробных чисел
+                        Random rd = new Random();
+
+                        for (int i = 0; i < a2h; i++)
+                        {
+                            for (int j = 0; j < a2w; j++)
+                            {
+                                arr2[i, j] = rd.NextDouble();
+                            }
+                        }
+
+
+                        using (StreamWriter sw = new StreamWriter(file, true))
+                        {
+                            //записываем имя и дату рождения
+                            sw.Write("{0} ", name);
+                            sw.Write("{0} ", last_name);
+                            sw.Write("{0} ", patronymic);
+                            sw.WriteLine(date_of_birth);
+
+                            //записываем количество строк и столбцов дробного массива
+                            sw.WriteLine("height of double array = {0}, width of double array = {1}", a2h, a2w);
+                            //записываем значения элементов дробного двумерного массива (каждая строка массива в новой строке файла).
+                            for (int i = 0; i < a2h; i++)
+                            {
+                                for (int j = 0; j < a2w; j++)
+                                {
+                                    sw.Write("{0} ",arr2[i, j]);
+                                }
+                                sw.WriteLine();
+                            }
+
+                            //записываем количество строк и столбцов целого массива
+                            sw.WriteLine("height of int array = {0}, width of int array = {1}", ah, aw);
+                            //записываем значения элементов целого двумерного массива (каждая строка массива в новой строке файла).
+                            for (int i = 0; i < ah; i++)
+                            {
+                                for (int j = 0; j < aw; j++)
+                                {
+                                    sw.Write("{0} ", arr[i, j]);
+                                }
+                                sw.WriteLine();
+                            }
+
+                            //текущая дата
+                            DateTime thisDay = DateTime.Today;
+
+                            //запмсываем текущую дату
+                            sw.WriteLine(thisDay);
+                        }
+                        break;
+
+                    case 4://выходим из програмы
+                        return;
+                        break;
+                }
+            } while (choice != 4);
+        }
+    }
+}
