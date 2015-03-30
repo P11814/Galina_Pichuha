@@ -258,3 +258,201 @@ namespace Task_1
         }
     }
 }
+
+
+
+
+
+
+
+/*
+ Задание 2. Приложение «Переводчик». 
+Создать консольное приложение «Переводчик». 
+Словарь каждого доступного для перевода языка  содержится в отдельном файле. Файл может иметь любую структуру. 
+Важно только наличие возможности получить два соответствующих слова на двух языках. 
+При запуске приложения, оно (приложение) должно запрашивать предоставить пользователю список доступных для перевода языков, 
+количество элементов которого соответствует количеству файлов со словарями. Пользователь должен сделать выбор. 
+После чего программа запрашивает у пользователя слово для перевода  и после ввода возвращает соответствующее слово на выбранном языке 
+(ввод слов должен осуществляться на русском языке).  
+ Необходимо обработать возможные логические аномалии, такие как: отсутствие слова в словаре, вод слова на несоответствующем языке, 
+ввод посторонних символов, таких как разделители и цифровые символы и так далее. 
+Хранение слов во время выполнения необходимо реализовать при помощи коллекции.
+ */
+
+*/
+в проекте создала 2 файла
+
+English.txt:
+арбуз watermelon
+бобёр beaver
+вода water
+город city
+дом home
+ёж hedgehog
+жизнь life
+зомби zombie
+имя name
+кот cat
+
+Belorussian.txt:
+арбуз кавун
+бокал келiх
+ёж вожык
+жизнь жыццё
+зонт парасон
+имя iмя
+каблук абцас
+пол падлога
+почка нырка
+юбка спаднiца
+*/
+
+//словари маленькие для примера
+//я сделала 2 словаря. По обзару и подобию можно добавлять сколько угодно файлов 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace Task_2
+{
+    class Program
+    {
+        static void translation(ref Dictionary<string, string> dict)
+        {
+            int ch = 1;
+            int i = 0;
+            //поиск перевода
+            do
+            {
+                Console.WriteLine("Enter word for translation:");
+                string word = Console.ReadLine();
+
+                //проверяем на ввод русских слов, а не ангийских
+                if(word[0] >= 'A' && word[0] <= 'z')
+                {
+                    Console.WriteLine("Enter russian words");
+                    return;
+                }
+
+                //проверка на ввод посторонних символов (проверяем только первый символ)
+                if ((word[0] >= 33 && word[0] <=64)||(word[0] >= 91 && word[0] <= 96)||(word[0] >= 123 && word[0] <= 187))
+                {
+                    Console.WriteLine("Wrong symbols!");
+                    return;
+                }
+
+                foreach (KeyValuePair<string, string> kvp in dict)
+                {
+                    if (kvp.Key == word)//если слово есть
+                    {
+                        Console.WriteLine(kvp.Value);
+                        i++;
+                        break;
+                    }
+                }
+                if (i == 0)
+                {
+                    Console.WriteLine("Word not found!");
+                }
+                do
+                {
+                    Console.WriteLine("1 - continue;");
+                    Console.WriteLine("0 - exit;");
+                    while (!int.TryParse(Console.ReadLine(), out ch)) { Console.WriteLine("Enter right value!"); }
+                } while ((ch < 0) && (ch > 1));
+            } while (ch == 1);
+        }
+        static void Main(string[] args)
+        {
+            int choice;
+
+            Dictionary<string, string> dictEn = new Dictionary<string, string>();//коллекция для хранения английских слов и их перевода
+            Dictionary<string, string> dictBel = new Dictionary<string, string>();//коллекция для хранения белорусских слов и их перевода
+            string[] str;//массив для хранения слов
+            string a, b;
+
+            do
+            {
+                Console.WriteLine("What dictionary do you need?");
+                Console.WriteLine("1 - English");
+                Console.WriteLine("2 - Belarisian");
+                Console.WriteLine("3 - if you want to exit");
+                while (!int.TryParse(Console.ReadLine(), out choice)) { Console.WriteLine("Enter right value!"); }
+
+
+                switch (choice)
+                {
+                    case 1:
+                        try
+                        {
+                            //если словарь уже заполнен
+                            if(dictEn.Count==0)
+                            {
+                                //перекодируем текст, чтобы прочитать слово на русском
+                                Encoding enc = Encoding.GetEncoding(1251);
+                                using (StreamReader sr = new StreamReader("English.txt", enc))
+                                {
+                                    //записываем слова из файла в коллекцию
+                                    string s = "";
+                                    while ((s = sr.ReadLine()) != null)
+                                    {
+                                        str = s.Split(new Char[] { ' ' });
+                                        a = str[0];
+                                        b = str[1];
+                                        //записываем пару в коллекцию
+                                        dictEn.Add(a, b);
+                                    }
+                                }
+                            }
+                            translation(ref dictEn);
+                        }
+                        catch (IOException exc)
+                        {
+                            Console.WriteLine(exc.Message);
+                            return;
+                        }
+                        break;
+
+                    case 2:
+                        try
+                        {
+                            //если словарь уже заполнен
+                            if (dictBel.Count == 0)
+                            {
+                                //перекодируем текст, чтобы прочитать слово на русском
+                                Encoding enc2 = Encoding.GetEncoding(1251);
+                                using (StreamReader sr2 = new StreamReader("Belorussian.txt", enc2))
+                                {
+                                    //записываем слова из файла в коллекцию
+                                    string s = "";
+                                    while ((s = sr2.ReadLine()) != null)
+                                    {
+                                        str = s.Split(new Char[] { ' ' });
+                                        a = str[0];
+                                        b = str[1];
+                                        //записываем пару в коллекцию
+                                        dictBel.Add(a, b);
+                                    }
+                                }
+                            }
+                            translation(ref dictBel);
+                        }
+                        catch (IOException exc)
+                        {
+                            Console.WriteLine(exc.Message);
+                            return;
+                        }
+                        break;
+
+                    case 3:
+                        return;
+                        break;
+                }
+            } while (choice != 3);
+        }
+    }
+}
