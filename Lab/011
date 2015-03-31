@@ -1,0 +1,406 @@
+/*
+ *сериализация массива объектов
+ *десериализация
+ *чтение из xml-файла
+ *измениение xml-файла
+ */
+
+using System;
+using System.Xml;
+using System.Xml.Serialization;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace XML
+{
+    [Serializable]
+    public class Airplane
+    {
+        private string name;
+        private string destination;
+        private int number;
+        private int hours;
+        private int minutes;
+
+
+        public Airplane() { }
+
+        public string NAME
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
+        }
+
+        public string DESTINATION
+        {
+            get
+            {
+                return destination;
+            }
+            set
+            {
+                destination = value;
+            }
+        }
+
+        //метод для подсчёта цифр
+        public int number_of_number(int nm)
+        {
+            int n = 0;//колличество цифр
+            int num_time = nm;
+            do
+            {
+                num_time = num_time / 10;
+                n++;
+            } while ((int)num_time != 0);
+            return n;
+        }
+
+        public int NUMBER
+        {
+            get
+            {
+                return number;
+            }
+            set
+            {
+                number = value;
+            }
+        }
+
+        public int HOURS
+        {
+            get
+            {
+                return hours;
+            }
+            set
+            {
+                hours = value;
+            }
+        }
+
+        public int MINUTES
+        {
+            get
+            {
+                return minutes;
+            }
+            set
+            {
+                minutes = value;
+            }
+        }
+
+        public void print_information()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Destination: {0}.", destination);
+            Console.WriteLine("Number: {0}.", number);
+            Console.WriteLine("Hours: {0}.", hours);
+            Console.WriteLine("Minutes: {0}.", minutes);
+            Console.WriteLine("++++++++++++++++++++");
+            Console.WriteLine();
+        }
+    }
+
+
+
+
+    [Serializable]
+    class Airport
+    {
+        public int num = 0;//количество самолётов
+        private Airplane[] mass;//массив из самолётов
+
+        public Airport()
+        {
+            Airplane[] mass = new Airplane[num];
+        }
+
+        //сортировка
+        int CompareByTime(Airplane first, Airplane second)
+        {
+            return (first.HOURS * 60 + first.MINUTES) - (second.HOURS * 60 + second.MINUTES);
+            // return (first.HOURS - second.HOURS);
+        }
+        public Airplane[] MASS
+        {
+            get
+            {
+                return mass;
+            }
+        }
+        public Airplane ADD
+        {
+
+            set
+            {
+                Airplane[] tmp = new Airplane[num];//временный массив
+                tmp = mass;//сохраняем текущий массив во временный//сохраняем текущий массив во временный
+                mass = new Airplane[num + 1];//создаём новый массив длиннее старого на 1 
+
+                for (int i = 0; i < num + 1; i++)
+                {
+                    if (i != num)
+                    {
+                        mass[i] = tmp[i];
+                    }
+                    else
+                    {
+                        mass[i] = value;//добавляем последний самолёт
+                    }
+                }
+                num++;
+            }
+        }
+
+
+        public Airplane this[int i]//i - номер рейса
+        {
+            get
+            {
+                foreach (Airplane it in mass)
+                {
+                    if (it.NUMBER == i)
+                    {
+                        return it;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return null;
+            }
+        }
+
+
+        public Airplane[] this[string i]//i - пункт назначения
+        {
+            get
+            {
+                List<Airplane> tmp_2 = new List<Airplane>();//создаём массив, куда будем сохранять все найденные самолёты
+
+                foreach (Airplane it in mass)
+                {
+                    if (it.DESTINATION == i)
+                    {
+                        tmp_2.Add(it);
+                    }
+                }
+                if (tmp_2.Capacity == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    tmp_2.Sort(CompareByTime);//сортируем по времени отправления
+                    return tmp_2.ToArray();
+                }
+            }
+        }
+
+
+        public Airplane[] this[int i, int j]//i - часы, j - минуты
+        {
+            get
+            {
+                List<Airplane> tmp_time = new List<Airplane>();//создаём массив, куда будем сохранять все найденные самолёты
+
+                foreach (Airplane it in mass)
+                {
+                    if ((it.HOURS == i) && (it.MINUTES >= j))//если часы совпадают, то минуты  могут быть больше j
+                    {
+                        tmp_time.Add(it);
+                    }
+                    if ((it.HOURS == i + 1) && (it.MINUTES <= j))//если часов больше на 1, то минут может быть не больше j
+                    {
+                        tmp_time.Add(it);
+                    }
+                }
+                if (tmp_time.Capacity == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    tmp_time.Sort(CompareByTime);//сортируем по времени отправления
+                    return tmp_time.ToArray();
+                }
+            }
+        }
+
+
+
+        public void print_information()
+        {
+            Console.WriteLine("Information about all the airplans of airport:");
+
+            if (mass.Length == 0)
+            {
+                Console.WriteLine("List is empty!");
+            }
+            else
+            {
+                foreach (Airplane it in mass)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("***************************");
+                    Console.WriteLine("Name: {0}", it.NAME);
+                    Console.WriteLine("Destination: {0}", it.DESTINATION);
+                    Console.WriteLine("Number: {0}", it.NUMBER);
+                    Console.WriteLine("Time: {0} : {1}", it.HOURS, it.MINUTES);
+                    Console.WriteLine("***************************");
+                    Console.WriteLine();
+                }
+            }
+        }
+
+
+        //сериализация
+        public void serial(Airplane[] mass)
+        {
+            FileStream fs1 = new FileStream("hml_task", FileMode.Create);
+            XmlSerializer ob = new XmlSerializer(typeof(Airplane[]));
+            ob.Serialize(fs1, mass);
+            fs1.Close();
+        }
+
+        //десериализация
+        public void deserial()
+        {
+            FileStream fs2 = new FileStream("hml_task", FileMode.Open);
+            XmlSerializer ob2 = new XmlSerializer(typeof(Airplane[]));
+            Airplane[] mass2 = (Airplane[])ob2.Deserialize(fs2);
+
+            foreach (Airplane it in mass2)
+            {
+                //для примера выыведем только имена
+                Console.WriteLine(it.NAME);
+            }
+            fs2.Close();
+        }
+
+        public void read()
+        {
+            XmlTextReader reader = null;
+            try
+            {
+                reader = new XmlTextReader("hml_task");
+                reader.WhitespaceHandling = WhitespaceHandling.None;
+                while (reader.Read())
+                {
+                    Console.WriteLine("{0}, {1}, {2}", reader.NodeType, reader.Name, reader.Value);
+                }
+            }
+            finally
+            {
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+            }
+        }
+
+        public void write()
+        {
+            XmlTextWriter writer = null;
+            try
+            {
+                writer = new XmlTextWriter("hml_task", System.Text.Encoding.Unicode);
+                writer.Formatting = Formatting.Indented;
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Airplane");
+                writer.WriteStartElement("Airplanes");
+                writer.WriteElementString("Name", "AAAAAAAAAA");
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
+            finally
+            {
+                if (writer != null)
+                {
+                    writer.Close();
+                }
+            }
+        }
+    }
+
+
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Airport Minsk_2 = new Airport();//создаём аэропорт
+
+            Airplane Boing_787_Dreamliner = new Airplane();
+            Boing_787_Dreamliner.NAME = "Boing_787_Dreamliner";
+            Boing_787_Dreamliner.DESTINATION = "Chicago";
+            Boing_787_Dreamliner.NUMBER = 123456;
+            Boing_787_Dreamliner.HOURS = 14;
+            Boing_787_Dreamliner.MINUTES = 30;
+
+            Airplane Boing = new Airplane();
+            Boing.NAME = "Z";
+            Boing.DESTINATION = "Chicago";
+            Boing.HOURS = 15;
+            Boing.MINUTES = 30;
+
+            Airplane A = new Airplane();
+            A.NAME = "A";
+            A.DESTINATION = "Gas";
+            A.HOURS = 14;
+            A.MINUTES = 35;
+
+            Airplane C = new Airplane();
+            C.NAME = "C";
+            C.DESTINATION = "Gasa";
+            C.HOURS = 14;
+            C.MINUTES = 50;
+
+            Airplane D = new Airplane();
+            D.NAME = "D";
+            D.DESTINATION = "Gasac";
+            D.HOURS = 14;
+            D.MINUTES = 40;
+
+            Minsk_2.ADD = Boing_787_Dreamliner;
+            Minsk_2.ADD = Boing;
+            Minsk_2.ADD = A;
+            Minsk_2.ADD = C;
+            Minsk_2.ADD = D;
+
+            //вся информация по самолётам конкретного аэропорта
+            //Minsk_2.print_information();
+
+
+            //сериализация
+            
+            Minsk_2.serial(Minsk_2.MASS);
+            Console.WriteLine();
+
+            //десериализация
+            Minsk_2.deserial();
+            Console.WriteLine();
+
+            //пример чтения из файла с помощью XmlTextReader
+            Minsk_2.read();
+            Console.WriteLine();
+
+            //пример измениения файла с помощью
+            Minsk_2.write();
+            Minsk_2.read();
+        }
+    }
+}
