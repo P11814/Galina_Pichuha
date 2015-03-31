@@ -222,7 +222,8 @@ namespace Task_1
                             sw.WriteLine(date_of_birth);
 
                             //записываем количество строк и столбцов дробного массива
-                            sw.WriteLine("height of double array = {0}, width of double array = {1}", a2h, a2w);
+                            sw.Write("{0}, {1}", a2h, a2w);
+                            sw.WriteLine();
                             //записываем значения элементов дробного двумерного массива (каждая строка массива в новой строке файла).
                             for (int i = 0; i < a2h; i++)
                             {
@@ -230,11 +231,11 @@ namespace Task_1
                                 {
                                     sw.Write("{0} ",arr2[i, j]);
                                 }
-                                sw.WriteLine();
                             }
-
+sw.WriteLine();
                             //записываем количество строк и столбцов целого массива
-                            sw.WriteLine("height of int array = {0}, width of int array = {1}", ah, aw);
+                            sw.Write("{0}, {1}",ah, aw);
+                            sw.WriteLine();
                             //записываем значения элементов целого двумерного массива (каждая строка массива в новой строке файла).
                             for (int i = 0; i < ah; i++)
                             {
@@ -242,8 +243,8 @@ namespace Task_1
                                 {
                                     sw.Write("{0} ", arr[i, j]);
                                 }
-                                sw.WriteLine();
                             }
+sw.WriteLine();
 
                             //текущая дата
                             DateTime thisDay = DateTime.Today;
@@ -369,15 +370,51 @@ namespace Task_2
                 } while ((ch < 0) && (ch > 1));
             } while (ch == 1);
         }
+        
+        static void add_in_coll(Dictionary<string, string> dict, string file)
+        {
+            string[] str;//массив для хранения слов
+            string a, b;
+            try
+                        {
+                            //если словарь уже заполнен
+                            if(dict.Count==0)
+                            {
+                                //перекодируем текст, чтобы прочитать слово на русском
+                                Encoding enc = Encoding.GetEncoding(1251);
+                                using (StreamReader sr = new StreamReader(file, enc))
+                                {
+                                    //записываем слова из файла в коллекцию
+                                    string s = "";
+                                    while ((s = sr.ReadLine()) != null)
+                                    {
+                                        str = s.Split(new Char[] { ' ' });
+                                        //прошла дебагером в этом месте, и всегда показывает, что
+                                        // в str[0] записано слово на русском, а в str[1] - его перевод.
+                                        //может, я неправильно поняла замечание?
+                                        a = str[0];
+                                        b = str[1];
+                                        //записываем пару в коллекцию
+                                        dict.Add(a, b);
+                                    }
+                                }
+                            }
+                            translation(ref dict);
+                        }
+            catch (IOException)
+            {
+                Console.WriteLine("No suitable dictionary!");
+                return;
+            }
+        }
+        
         static void Main(string[] args)
         {
             int choice;
 
             Dictionary<string, string> dictEn = new Dictionary<string, string>();//коллекция для хранения английских слов и их перевода
             Dictionary<string, string> dictBel = new Dictionary<string, string>();//коллекция для хранения белорусских слов и их перевода
-            string[] str;//массив для хранения слов
-            string a, b;
-
+            
             do
             {
                 Console.WriteLine("What dictionary do you need?");
@@ -390,70 +427,12 @@ namespace Task_2
                 switch (choice)
                 {
                     case 1:
-                        try
-                        {
-                          //у вас на case 1 и case 2 одинаковые методы за исключением словаря, в который вы добавляете 
-                          //слова. Одинаковый код надо помещать в метод, в который уже можно передавать различающиеся
-                          //элементы (название файла, объект словаря). Остальное все идентично.
-                            //если словарь уже заполнен
-                            if(dictEn.Count==0)
-                            {
-                                //перекодируем текст, чтобы прочитать слово на русском
-                                Encoding enc = Encoding.GetEncoding(1251);
-                                using (StreamReader sr = new StreamReader("English.txt", enc))
-                                {
-                                    //записываем слова из файла в коллекцию
-                                    string s = "";
-                                    while ((s = sr.ReadLine()) != null)
-                                    {
-                                        str = s.Split(new Char[] { ' ' });
-                                        a = str[0];
-                                        b = str[1]; // вываливается тут программа. нет индекса 1. после прочтения 1-ой строки
-                                        //записываем пару в коллекцию
-                                        dictEn.Add(a, b);
-                                    }
-                                }
-                            }
-                            translation(ref dictEn);
-                        }
-                        catch (IOException exc)
-                        {
-                            Console.WriteLine(exc.Message);
-                            return;
-                        }
+                    // так старалась выносить, а это я прозевала) Так, конечно, лучше)
+                        add_in_coll(dictEn, "English.txt");
                         break;
 
                     case 2:
-                        try
-                        {
-                            //если словарь уже заполнен
-                            if (dictBel.Count == 0)
-                            {
-                                //перекодируем текст, чтобы прочитать слово на русском
-                                Encoding enc2 = Encoding.GetEncoding(1251);
-                                using (StreamReader sr2 = new StreamReader("Belorussian.txt", enc2))
-                                {
-                                    //записываем слова из файла в коллекцию
-                                    string s = "";
-                                    while ((s = sr2.ReadLine()) != null)
-                                    {
-                                        str = s.Split(new Char[] { ' ' });
-                                        a = str[0];
-                                        b = str[1];
-                                        //записываем пару в коллекцию
-                                        dictBel.Add(a, b);
-                                    }
-                                }
-                            }
-                            translation(ref dictBel);
-                        }
-                        catch (IOException exc)
-                        {
-                        //почему бы обработку искл. ситуации не сделать более понятной. Например, вывести свое
-                        //собственное сообщение о том, что нет подходящего словаря. Т.к. встроенный Message выводит страшные надписи и длинные 
-                            Console.WriteLine(exc.Message);
-                            return;
-                        }
+                        add_in_coll(dictBel, "Belorussian.txt");
                         break;
 
                     case 3:
