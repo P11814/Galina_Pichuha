@@ -34,8 +34,12 @@ namespace Task
                 {
                     foreach (KeyValuePair<string, int> kvp in dict)
                     {
-                        dict[it] = kvp.Value + 1;
-                        break;
+                    //немного переделала в этом месте - теперь Грек - 3)
+                        if (kvp.Key == it)
+                        {
+                            dict[it] = kvp.Value + 1;
+                            break;
+                        }
                     }
 
                 }
